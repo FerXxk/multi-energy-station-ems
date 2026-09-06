@@ -1,0 +1,40 @@
+>> medir_reserva_ociosa();
+
+
+=== A — 40 simulaciones ===
+Importacion total                        208.0 kWh
+  de ella al electrolizador+compresor    159.0 kWh  (76 %)
+SOC medio en esos instantes               86.5 %
+SOC minimo alcanzado                      68.7 %
+SOC final - SOC inicial                  +12.9 %
+
+piso de SOC                        20 %         40 %         60 %
+E divertible (kWh)                159.0        151.5        119.0
+  % del import discrec.          100.0%        95.3%        74.8%
+Premio (EUR/sim)                  21.16        20.07        14.94
+sin reponer al final (kWh)        152.9        145.4        112.9
+
+  Por escenario (E divertible kWh / premio EUR, piso 20 %):
+    E1_lab_soleado           69.5 kWh      7.69 EUR   (SOC medio 86.8 %)
+    E2_lab_nublado          353.4 kWh     49.48 EUR   (SOC medio 86.6 %)
+    E3_finde_soleado        101.8 kWh     12.02 EUR   (SOC medio 85.3 %)
+    E4_volatilidad          111.2 kWh     15.44 EUR   (SOC medio 87.3 %)
+
+
+COMO LEERLO
+  1. Si "E divertible" con el piso mas bajo es una fraccion apreciable de
+     la importacion discrecional y el "SOC medio en esos instantes" esta
+     muy por encima del piso, el sexto defecto es REAL y la Version D
+     tiene margen. Criterio: >40 % del import discrecional.
+  2. Si se desploma al subir el piso, el premio depende de la reserva y
+     lo que decide es D2 (reserva dinamica), no D1.
+  3. Si con el piso mas bajo sale ~0, el diagnostico de 0-UNDEVICIES es
+     FALSO: la bateria no tenia esa energia disponible. NO hay Version D,
+     y ese resultado negativo tambien se escribe.
+  4. "sin reponer al final" es la energia desviada que la exportacion NO
+     llego a devolver a la bateria. Si es grande, el contrafactual esta
+     vaciando el almacenamiento y el premio no es gratis.
+
+Es una COTA SUPERIOR sobre trayectoria fija: el sistema real habria
+reaccionado. La cifra que decide es la campana de la Version D.
+>> 

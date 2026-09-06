@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# OS
+.DS_Store
+Thumbs.db
+
+# MATLAB/Simulink caches
+*.asv
+*.slxc
+*.slxp
+*.autosave
+*.mat.autosave
+slprj/
+slx_extracted/
+
+# Environment
+.venv/
+env/
+venv/
+.env
+
+# Large generated files
+datos_OASIS.mat
+codigo/data/datos_OASIS.mat
+SimugridElectrolinera/Datos/datos_OASIS.mat
+
+
+AGENTS.md
+# ── Resultados y perfiles de campaña (2026-09-03) ────────────────────────
+# Son REGENERABLES y pesan mucho: 908 MB en codigo/resultados y 162 MB en
+# Datos/Cars. Los .mat de resultados salen de campana_simulacion; los
+# perfiles de demanda salen de Demanda_Coches_Aleatoria, que es determinista
+# dada la semilla, asi que cualquiera puede reproducirlos exactamente.
+# Se versionan solo los CSV, que llevan TODOS los KPIs (incluidos dSOC_pct y
+# d_kg_H2_high, anadidos para que el CSV baste sin releer los .mat).
+codigo/resultados/*.mat
+!codigo/resultados/metricas_lstm_*.mat
+SimugridElectrolinera/Datos/Cars/perfil_*.mat
+
+# Zona de descarte: nada de aqui debe subirse.
+_to_delete/

@@ -1,0 +1,15 @@
+metrica,valor
+total_sesiones,1875.0
+dias_observados,221.0
+sesiones_por_dia,8.484162895927602
+energia_media_kwh,32.23297950666667
+energia_mediana_kwh,29.383
+energia_std_kwh,19.38449274347317
+duracion_media_min,32.95146666666667
+duracion_mediana_min,30.0
+duracion_std_min,17.571087260218864
+soc_llegada_media,33.5724674876284
+soc_llegada_mediana,31.0
+soc_salida_media,79.10704170913668
+potencia_media_kw,62.435857138798355
+n_cargadores,2.0
