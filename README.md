@@ -10,6 +10,8 @@ Escuela Técnica Superior de Ingeniería · Universidad de Sevilla
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
 ![Typst](https://img.shields.io/badge/Typst-memoria-239DAD)
 [![Memoria PDF](https://img.shields.io/badge/leer%20la%20memoria-PDF-B71C1C)](memoria/main.pdf)
+![Licencia del codigo](https://img.shields.io/badge/c%C3%B3digo-MIT-3DA639)
+![Licencia de la memoria](https://img.shields.io/badge/memoria-CC%20BY%204.0-EF9421)
 
 <img src="memoria/img/electrolinera-iso-NE.png" width="760" alt="Vista isométrica de la estación: marquesinas fotovoltaicas, cargadores de vehículo eléctrico, surtidor de hidrógeno, electrolizador, compresor y tanques">
 
@@ -197,3 +199,16 @@ lo estrictamente necesario para simular y reproducir el trabajo —código, dato
 entrenadas, los CSV de la campaña reportada y la fuente de la memoria—. No se versionan los `.mat`
 de resultados ni los perfiles de demanda, porque son regenerables: el generador de tráfico es
 determinista dada la semilla, y los CSV llevan todos los KPIs.
+
+## Licencia
+
+El **código** —`codigo/` y los scripts de MATLAB y Python— se publica bajo licencia
+**MIT** ([LICENSE](LICENSE)). La **memoria** y las figuras originales del autor se publican bajo
+**CC BY 4.0** ([LICENSE-DOCS](LICENSE-DOCS)): puedes reutilizarlas, incluso comercialmente,
+citando la autoría.
+
+El modelo `OASIS.slx` y sus S-Functions también son MIT: están montados sobre la librería pública
+Simugrid. Quedan fuera de ambas licencias la plantilla Typst de `memoria/template/` —adaptada de
+[aleokdev/plantilla-tfg-etsi-us](https://github.com/aleokdev/plantilla-tfg-etsi-us) con permiso de su
+autor—, la marca de la Universidad de Sevilla y los conjuntos de datos de `codigo/data/`, que
+conservan las condiciones de sus titulares. El detalle está en [NOTICE.md](NOTICE.md).
