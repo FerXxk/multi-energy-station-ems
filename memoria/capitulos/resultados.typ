@@ -2,7 +2,7 @@
 
 // Cifras de la campaña con la constante de la regla a 8 EUR/kg (tandas *_8 del 04-09).
 
-Este capítulo presenta la ejecución de la campaña descrita en el @cap-metodologia y la comparación cuantitativa. Se documenta primero cómo se produjeron los resultados (la cadena de _scripts_, el diseño de repeticiones y las comprobaciones de validez) y después las cifras, en el mismo orden del capítulo anterior: el resultado de la variante predictiva, el diagnóstico que reorientó el trabajo y la Versión C con su ablación.
+Este capítulo presenta la ejecución de la campaña descrita en el @cap-metodologia y la comparación cuantitativa. Se documenta primero cómo se produjeron los resultados (la cadena de _scripts_, el diseño de repeticiones y las comprobaciones de validez) y después las cifras, en el mismo orden del capítulo anterior: el resultado de la variante predictiva, el diagnóstico que reorientó el trabajo y la Versión C con el análisis de contribución de sus componentes.
 
 == Cadena de ejecución <sec-cadena-ejecucion>
 
@@ -48,7 +48,7 @@ La @tbl-alcance resume las tandas que sostienen los resultados de este capítulo
     [B], [24 h], [40], [Variante predictiva: previsiones inyectadas en las reglas de A, con arbitraje dimensionado (@sec-iteracion).],
     [B con oráculo], [24 h], [40], [La misma variante con previsión perfecta.],
     [A, B], [7 días], [20], [Control de horizonte de la comparación anterior (regla a 6,12 €/kg).],
-    [A, C0, C\_p, C], [7 días], [20], [Ablación de la Versión C (@tbl-ablacion-E), contra A a 7 días, con la constante de la regla a 8 €/kg.],
+    [A, C0, C\_p, C], [7 días], [20], [Análisis de contribución de la Versión C (@tbl-ablacion-E), contra A a 7 días, con la constante de la regla a 8 €/kg.],
     [A, C0, C\_p, C a 6,12 €/kg], [7 días], [20], [Sensibilidad a la constante económica de la regla (@sec-res-sensibilidad).],
   ),
   caption: [Tandas ejecutadas. Los pares son combinaciones escenario × semilla; las semillas son las mismas en todas las tandas de un mismo horizonte. Todas las tandas llevan en la regla el coste de reposición de 8 €/kg salvo el control de horizonte de B, que conserva el índice de 6,12; la @sec-res-sensibilidad muestra que esa constante cambia el coste semanal en menos de medio euro.],
@@ -156,7 +156,7 @@ El ciclado adicional solo puede acotarse en euros de forma aproximada. La Versi�
   caption: [Nivel del tanque de alta a lo largo de la semana nublada, misma semilla, con la zona crítica sombreada. C pasa más tiempo en la zona crítica que A.],
 ) <fig-res-tanque>
 
-=== Ablación: cuánto vale cada componente
+=== Contribución de cada componente
 
 #figure(
   table(
@@ -167,7 +167,7 @@ El ciclado adicional solo puede acotarse en euros de forma aproximada. La Versi�
     [C\_p (+ programación con persistencia) − C0], [−5,1], [−3,0], [19/20], [$6,4 dot 10^(-4)$],
     [C (+ programación con LSTM) − C\_p], [*0,00*], [0,00], [—], [idénticas],
   ),
-  caption: [Ablación de la Versión C. Las dos últimas tandas son idénticas a precisión de máquina en los 40 indicadores de los 20 pares.],
+  caption: [Análisis de contribución de la Versión C. Las dos últimas tandas son idénticas a precisión de máquina en los 40 indicadores de los 20 pares.],
 ) <tbl-res-ablacion>
 
 Alimentar el electrolizador desde la batería explica el 90 % de la mejora y supera el criterio de falsación —mejorar en los dos escenarios con excedente suficiente para reponer—, así como las predicciones de magnitud: la importación destinada al electrolizador cae un 48 % (se previó al menos un 40 %) y la energía descargada sube 811 kWh semanales (se previeron unos 1 000).
@@ -178,6 +178,6 @@ La red neuronal de precio no cambia ningún resultado: su efecto es exactamente 
 
 === Sensibilidad a los precios del hidrógeno <sec-res-sensibilidad>
 
-El primer supuesto variado es la constante de la regla. La ablación se ha ejecutado dos veces, con `H2_PRECIO_EXT_KG` a 8 €/kg (umbral de 149 €/MWh, la campaña que se reporta) y a 6,12 €/kg (umbral de 114). El cambio mueve el coste semanal de A 0,12 € de media (−0,49 € en el nublado y cero en los otros tres escenarios) y el de C 0,02 €, de modo que las diferencias pareadas de la @tbl-res-E y la @tbl-res-ablacion cambian, como mucho, en la primera decimal. La razón es el defecto 7 de la @sec-defectos: con el tanque de baja por encima del 68 % el test heredado evalúa solo el coste de comprimir, y el umbral económico casi nunca es el que decide. El nublado, único escenario con precios entre 114 y 149 €/MWh en horas de déficit, es también donde A ya compraba a 149 por esa misma vía.
+El primer supuesto variado es la constante de la regla. El análisis se ha ejecutado dos veces, con `H2_PRECIO_EXT_KG` a 8 €/kg (umbral de 149 €/MWh, la campaña que se reporta) y a 6,12 €/kg (umbral de 114). El cambio mueve el coste semanal de A 0,12 € de media (−0,49 € en el nublado y cero en los otros tres escenarios) y el de C 0,02 €, de modo que las diferencias pareadas de la @tbl-res-E y la @tbl-res-ablacion cambian, como mucho, en la primera decimal. La razón es el defecto 7 de la @sec-defectos: con el tanque de baja por encima del 68 % el test heredado evalúa solo el coste de comprimir, y el umbral económico casi nunca es el que decide. El nublado, único escenario con precios entre 114 y 149 €/MWh en horas de déficit, es también donde A ya compraba a 149 por esa misma vía.
 
 El segundo supuesto es el precio de valoración. Las conclusiones de la @tbl-res-E tampoco dependen de la valoración de la energía terminal ni del hidrógeno: el coste neto, el corregido y el total coinciden en signo y en orden de magnitud, y la diferencia de C es un orden de magnitud mayor que el efecto de valorar la batería al precio de importación en vez de al de exportación. No ocurría lo mismo en la comparación de la variante predictiva, donde el signo del coste corregido sobre la semana cambiaba según el precio de valoración entre 2,8 y 104 €/MWh; esa fragilidad es una de las razones por las que la semana se presenta allí como control de horizonte y no como evidencia principal.

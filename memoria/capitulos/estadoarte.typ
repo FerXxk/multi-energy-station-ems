@@ -232,7 +232,7 @@ A la vista de la revisión bibliográfica anterior, el presente trabajo combina 
 
 1. *Integración de múltiples vectores energéticos* (EV + H2) bajo un único EMS en una estación de repostaje de carretera, con generación fotovoltaica local.
 
-2. *Medida de lo que aporta la predicción dentro de un EMS de reglas*: dos modelos LSTM de irradiancia solar y precio, validados frente a líneas base no triviales e integrados en el bucle de Simulink mediante S-Functions, y una cadena de medida (comparación pareada por semilla, oráculo, descomposición de la importación por destinos y ablación por componentes) que separa la mejora atribuible a la previsión de la atribuible al diseño de las reglas que la consumen.
+2. *Medida de lo que aporta la predicción dentro de un EMS de reglas*: dos modelos LSTM de irradiancia solar y precio, validados frente a líneas base no triviales e integrados en el bucle de Simulink mediante S-Functions, y una cadena de medida (comparación pareada por semilla, oráculo, descomposición de la importación por destinos y análisis de contribución por componentes) que separa la mejora atribuible a la previsión de la atribuible al diseño de las reglas que la consumen.
 
 3. *Validación simulada con perfiles de demanda EV basados en datos reales* (dataset DESL-EPFL Level 3 DC fast charging), en lugar de perfiles sintéticos simplificados.
 
