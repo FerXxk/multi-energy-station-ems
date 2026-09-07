@@ -48,7 +48,7 @@ ruido del escenario.
 | Ciclado de la batería | ×2,2 | — | *coste declarado* |
 | Hidrógeno no servido (día nublado) | 0,82 → 3,07 kg/semana | — | *coste declarado* |
 
-Y la ablación dice **de dónde sale** esa mejora:
+Y el análisis de contribución dice **de dónde sale** esa mejora:
 
 ```
 A  ──▶ C0   alimentar el electrolizador desde la batería   −47,1 €/semana   ← el 90 % del ahorro

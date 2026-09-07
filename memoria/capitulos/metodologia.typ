@@ -2,55 +2,9 @@
 
 == Enfoque general
 
-Este capítulo describe cómo se combinan los elementos presentados hasta ahora (el dimensionamiento y los perfiles de demanda del @cap-datos-ev y los modelos de predicción del @cap-lstm) en el sistema de gestión de energía de la estación. El capítulo está organizado alrededor de una única versión final del EMS, la Versión C, y del camino que llevó hasta ella. Se parte del EMS heurístico de referencia heredado de @molero2025ems (Versión A), se resume lo que enseñó el intento de mejorarlo con predicción, y se describe en detalle el diseño final, que separa dos decisiones que la heurística tomaba juntas: de dónde sale la energía que consume el electrolizador y cuándo conviene fabricar el hidrógeno.
+Este capítulo describe cómo se combinan los elementos presentados hasta ahora (la instalación del @cap-estacion, los perfiles de demanda del @cap-datos-ev y los modelos de predicción del @cap-lstm) en el sistema de gestión de energía de la estación. El capítulo está organizado alrededor de una única versión final del EMS, la Versión C, y del camino que llevó hasta ella. Se parte del EMS heurístico de referencia heredado de @molero2025ems (Versión A), se resume lo que enseñó el intento de mejorarlo con predicción, y se describe en detalle el diseño final, que separa dos decisiones que la heurística tomaba juntas: de dónde sale la energía que consume el electrolizador y cuándo conviene producir el hidrógeno.
 
 El principio metodológico es el de un diseño comparativo controlado. Todas las variantes del EMS se ejecutan sobre exactamente el mismo modelo físico de Simulink, con los mismos perfiles de entrada (fotovoltaica, demanda eléctrica, demanda de hidrógeno y precio), y solo se sustituye el _script_ del bloque de decisión. Las versiones se construyen además de forma incremental: cada una difiere de la anterior en un único punto, con un interruptor por mecanismo. La diferencia observada entre dos tandas se puede atribuir así a un cambio concreto y no a un rediseño global. La Versión C se evalúa desactivando selectivamente cada uno de sus componentes (_ablation study_): la misma lógica con y sin cada uno de ellos.
-
-== Entorno de simulación: la microrred OASIS
-
-El modelo utilizado es la microrred OASIS, implementada en Simulink dentro de `SimugridElectrolinera/` (`init_OASIS.m`, `OASIS.slx`). Esta microrred incluye generación fotovoltaica, un electrolizador PEM, un tanque pulmón de baja presión (`LOH`), un compresor, un tanque surtidor de alta presión (`LOH_High`), una pila de combustible, carga de vehículos eléctricos y demanda de hidrógeno, con las S-Functions `lstm_sol.m` y `lstm_precios.m` ya integradas en el bucle de simulación (@cap-lstm). La @fig-oasis-3d muestra la disposición física que se modela (marquesinas fotovoltaicas sobre los puntos de suministro y recinto técnico con los equipos electroquímicos y los tanques) y la @fig-arquitectura-oasis, los bloques del modelo y las señales que intercambian con el EMS.
-
-La @tbl-planta reúne los parámetros de la instalación simulada, que hasta aquí se han ido justificando por separado en el @cap-estado-arte y el @cap-datos-ev.
-
-#figure(
-  table(
-    columns: (1.1fr, 1.5fr, 1.6fr),
-    align: (left, left, left),
-    table.header([*Subsistema*], [*Parámetro*], [*Valor*]),
-    [Generación fotovoltaica], [Configuración del array], [24 módulos en serie × 35 ramas en paralelo, ≈508 kWp (@cap-estado-arte)],
-    [Batería (BESS)], [Capacidad / potencia], [1 MWh; ≈494 kW (0,5C), 380 V y 1 300 A; estado de carga inicial del 70 %],
-    [Electrolizador PEM], [Potencia / consumo específico], [200 kW; ≈50 kWh/kg; entrega a 40 bar],
-    [Compresor], [Potencia / consumo específico], [15 kW; 3,6 kWh/kg; etapa de baja a alta presión],
-    [Pila de combustible (PEMFC)], [Potencia], [130 kW de diseño (`PmaxFC`); el bloque electroquímico está parametrizado con 120 celdas de 600 cm² y 600 A, y entrega menos],
-    [Tanque de baja (`LOH`)], [Volumen / presión], [3,1 m³; 40 bar máximos, 26 bar iniciales; 10,1 kg lleno],
-    [Tanque de alta (`LOH_High`)], [Volumen / presión], [0,41 m³; 600 bar máximos, 480 bar iniciales (80 % de nivel al arrancar); 20,0 kg lleno con la ecuación de gas ideal del bloque, 14,2 kg con gas real (@cap-estado-arte)],
-    [Cargadores de vehículo eléctrico], [Número / potencia], [2 × 50 kW en corriente continua (@sec-num-cargadores)],
-    [Surtidor de hidrógeno], [Número / caudal], [1 módulo a 1,2 kg/min; 700 bar es la presión nominal del depósito del vehículo (SAE J2601), no la del almacenamiento (@cap-estado-arte)],
-    [Conexión a red], [Tipo / valoración], [Bidireccional, sin límite de potencia contratada en el modelo; energía valorada al precio horario del mercado diario, sin peajes ni cargos (@sec-metricas)],
-  ),
-  caption: [Configuración de la estación OASIS tal y como está parametrizada en `OASIS.slx`. Las cifras de hidrógeno almacenado siguen la ecuación de estado del propio bloque, que sobrestima la masa a alta presión; el efecto sobre la lectura de los resultados se discute en el @cap-estado-arte.],
-) <tbl-planta>
-
-#figure(
-  grid(
-    columns: (1fr, 1fr),
-    gutter: 4pt,
-    image("../img/electrolinera-iso-NO.png", width: 100%),
-    image("../img/electrolinera-iso-NE.png", width: 100%),
-    image("../img/electrolinera-iso-SO.png", width: 100%),
-    image("../img/electrolinera-iso-SE.png", width: 100%),
-  ),
-  caption: [Vistas isométricas de la estación OASIS desde los cuatro cuadrantes (noroeste, noreste, suroeste y sureste). Las dos marquesinas fotovoltaicas cubren los dos cargadores de vehículo eléctrico de 50 kW y el surtidor de hidrógeno; el recinto vallado agrupa los contenedores de batería, electrolizador, compresor y pila de combustible, el tanque tampón de baja presión y el bastidor de botellas de alta presión.],
-) <fig-oasis-3d>
-
-#page(flipped: true)[
-  #figure(
-    image("../img/arquitectura_modulos_oasis.png", width: 100%),
-    caption: [Arquitectura por módulos del modelo `OASIS.slx`. Los bloques se agrupan por la red que intercambian: consignas del EMS hacia los equipos (trazo discontinuo naranja), medidas de los equipos hacia el EMS (discontinuo gris), potencia eléctrica en el bus de alterna (azul) y flujo de hidrógeno (verde), con los nombres de las señales tal y como aparecen en Simulink. El EMS es un único bloque `MATLAB Function` con once entradas y seis salidas; las dos S-Functions de previsión le entregan `PVPred` y `PrecioPred`.],
-  ) <fig-arquitectura-oasis>
-]
-
-El grupo de investigación dispone además de un segundo modelo, `AIHRE_Puerto_Negocio1v1.slx`, con una arquitectura de componentes muy similar a la del Caso 2 de Molero Almazán @molero2025ems (electrolizador PEM, compresor, doble tanque de H2, pila de combustible, batería y demanda de H2 externa). Ese modelo no se emplea en este trabajo, que se realiza íntegramente sobre OASIS, y se conserva fuera del árbol de trabajo del repositorio.
 
 == El EMS de referencia — Versión A <sec-ems-referencia>
 
@@ -64,7 +18,7 @@ El EMS heurístico previo de OASIS gestionaba únicamente el electrolizador medi
 El bloque `MATLAB Function` de `OASIS.slx` tiene 11 entradas y 6 salidas. Entre las entradas está `PrecioPred`, que no alimentaba ninguna decisión, y entre las salidas no hay ninguna de compra externa de H2. Todas las versiones del EMS de este trabajo mantienen esa firma, de modo que sustituyen al _script_ del bloque sin tocar el cableado de Simulink. La adaptación respecto al código de @molero2025ems ha requerido los siguientes cambios, comentados en `codigo/EMS/ems_A.m`:
 
 1. *Conservar la máquina de estados existente.* El EMS de referencia calcula consignas de potencia de forma puramente algebraica, sin máquina de estados; para no modificar los bloques de Simulink ya construidos, la lógica de decisión se ha conservado y se traduce, en un último paso, a los pulsos `DiscEl`/`DiscFC` que gobiernan las transiciones Paro/Standby/Run, usando el TMF como condición de arranque/parada.
-2. *Reescalar los umbrales de presión a nivel porcentual.* El EMS original trabaja con presiones absolutas en bar (tanque de alta hasta 900 bar de techo de seguridad). OASIS expresa el nivel de ambos tanques en porcentaje (`LOH`, `LOH_High`), sobre los límites de diseño propios de la instalación. El bloque de tanque de alta empleado en las simulaciones está parametrizado a 600 bar de presión máxima (@cap-estado-arte), frente a los 900 bar de techo de seguridad del tanque de @molero2025ems. Las dos escalas son relativas, así que la @tbl-umbrales-ems no cambia: los porcentajes de la tabla se obtienen como la fracción que cada umbral de Molero Almazán representa sobre su propio rango de diseño (bar/900), y esa fracción se traslada a la escala 0--100% de OASIS.
+2. *Reescalar los umbrales de presión a nivel porcentual.* El EMS original trabaja con presiones absolutas en bar (tanque de alta hasta 900 bar de techo de seguridad). OASIS expresa el nivel de ambos tanques en porcentaje (`LOH`, `LOH_High`), sobre los límites de diseño propios de la instalación. El bloque de tanque de alta empleado en las simulaciones está parametrizado a 600 bar de presión máxima (@cap-estacion), frente a los 900 bar de techo de seguridad del tanque de @molero2025ems. Las dos escalas son relativas, así que la @tbl-umbrales-ems no cambia: los porcentajes de la tabla se obtienen como la fracción que cada umbral de Molero Almazán representa sobre su propio rango de diseño (bar/900), y esa fracción se traslada a la escala 0--100% de OASIS.
 
   Ambas magnitudes miden lo mismo: los bloques de tanque de OASIS calculan la presión a partir del hidrógeno almacenado y entregan el nivel como $"LOH" = P \/ P_max times 100$, es decir, como fracción de presión sobre la presión máxima del tanque, que es la magnitud en la que están expresados los umbrales de @molero2025ems.
 
@@ -87,7 +41,7 @@ El bloque `MATLAB Function` de `OASIS.slx` tiene 11 entradas y 6 salidas. Entre 
   caption: [Reescalado de los umbrales de nivel de tanque de @molero2025ems (bar, sobre su rango de diseño) a los límites propios de OASIS (%). Cada porcentaje es la fracción que el umbral representa sobre el rango de diseño de *su propio* tanque, y `LOH` es en ambos casos una fracción de presión, por lo que el traslado es dimensionalmente consistente. Lo que se conserva es la posición relativa del umbral dentro del rango útil, no la presión absoluta: el 76 % equivale a 680 bar sobre los 900 bar de @molero2025ems y a 456 bar sobre los 600 bar con los que está parametrizado el tanque de OASIS.],
 ) <tbl-umbrales-ems>
 
-La potencia máxima de la batería (`PmaxBat`) usaba provisionalmente 100 kW (coincidiendo con el pico de dos cargadores EV de 50 kW) a falta de una cifra real. Con los parámetros reales del bloque de batería de OASIS (@cap-estado-arte: 380 V de tensión de circuito abierto, 1 300 A de corriente máxima de carga/descarga, es decir 0,5C), `PmaxBat` se fija en ≈0,5 MW ($380 "V" times 1300 "A" ≈ 494 "kW"$) en el código de todas las versiones.
+La potencia máxima de la batería (`PmaxBat`) usaba provisionalmente 100 kW (coincidiendo con el pico de dos cargadores EV de 50 kW) a falta de una cifra real. Con los parámetros reales del bloque de batería de OASIS (@cap-estacion: 380 V de tensión de circuito abierto, 1 300 A de corriente máxima de carga/descarga, es decir 0,5C), `PmaxBat` se fija en ≈0,5 MW ($380 "V" times 1300 "A" ≈ 494 "kW"$) en el código de todas las versiones.
 
 Los umbrales de tanque de la @tbl-umbrales-ems son los que se trasladan de @molero2025ems; el resto de constantes que gobiernan la decisión de la Versión A se recogen en la @tbl-parametros-A. Todas ellas se mantienen sin cambios en la Versión B y en la Versión C, de modo que la @tbl-parametros-E solo añade lo propio de esta última.
 
@@ -157,7 +111,7 @@ Los defectos 1 a 5 de la @tbl-defectos-anotados se dejan anotados y no se corrig
 
 == El EMS final — Versión C <sec-ems-final>
 
-La Versión C (`codigo/EMS/ems_C.m`; en las etiquetas de los ficheros de resultados esta versión conserva el nombre `E` con el que se desarrolló, igual que la Versión B conserva `B_prima2`, por trazabilidad con los registros de la campaña) parte de la Versión A y le hace dos cambios, cada uno con su interruptor. Todo lo demás —parámetros, umbrales, rama de excedente, TMF, histéresis y máquina de estados— es idéntico, para que cada diferencia observada sea atribuible a un cambio concreto. La idea que los une es separar dos decisiones que la heurística tomaba a la vez y con la misma regla: de dónde sale la energía que consume el electrolizador, y cuándo conviene fabricar el hidrógeno.
+La Versión C (`codigo/EMS/ems_C.m`; en las etiquetas de los ficheros de resultados esta versión conserva el nombre `E` con el que se desarrolló, igual que la Versión B conserva `B_prima2`, por trazabilidad con los registros de la campaña) parte de la Versión A y le hace dos cambios, cada uno con su interruptor. Todo lo demás —parámetros, umbrales, rama de excedente, TMF, histéresis y máquina de estados— es idéntico, para que cada diferencia observada sea atribuible a un cambio concreto. La idea que los une es separar dos decisiones que la heurística tomaba a la vez y con la misma regla: de dónde sale la energía que consume el electrolizador, y cuándo conviene producir el hidrógeno.
 
 === La batería alimenta al electrolizador
 
@@ -194,7 +148,7 @@ Las dos redes del @cap-lstm entran en la Versión C con funciones distintas, y s
 
 Ninguna de las dos previsiones fija una potencia. Las dos entran como dato de un planificador cuya ejecución sigue en manos de los bloques heredados, y ahí está la diferencia con la primera variante predictiva: la previsión informa una decisión con margen económico, en lugar de disparar una acción de magnitud fija.
 
-=== Parámetros y lo que no lleva
+=== Parámetros y limitaciones del EMS propuesto
 
 #figure(
   table(

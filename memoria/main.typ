@@ -73,6 +73,8 @@
 
   #include "capitulos/estadoarte.typ"
 
+  #include "capitulos/estacion.typ"
+
   #include "capitulos/datos_ev.typ"
 
   #include "capitulos/lstm.typ"
