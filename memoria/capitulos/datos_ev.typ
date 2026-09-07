@@ -1,4 +1,4 @@
-= Datos de carga EV y dimensionamiento de la estación <cap-datos-ev>
+= Datos de carga EV y demanda de la estación <cap-datos-ev>
 
 El diseño de una estación de repostaje multi-energía requiere datos reales de uso para justificar tanto la potencia de los cargadores como su número. En este capítulo se describe el dataset de demanda de vehículos eléctricos (EV) del que se parte y se justifica el dimensionamiento de la estación propuesta.
 
@@ -188,7 +188,9 @@ La @fig-duracion-sesion muestra que la mayoría de las sesiones en el dataset DE
   caption: [Distribución de duración de sesiones en DESL-EPFL. Media: 33 min, mediana: 30 min.],
 ) <fig-duracion-sesion>
 
-== Dimensionamiento de la estación
+== Dimensionamiento de los puntos de suministro
+
+El dimensionamiento del resto de los equipos está en el @cap-estacion.
 
 === Número de cargadores EV <sec-num-cargadores>
 
