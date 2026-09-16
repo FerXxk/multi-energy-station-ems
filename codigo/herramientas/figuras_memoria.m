@@ -21,7 +21,7 @@ for ii = 1:numel(campos)
 end
 if ~exist(ruta_img, 'dir'), mkdir(ruta_img); end
 
-col_A  = [0.45 0.45 0.45];
+col_A  = [0.85 0.55 0.10];   % ambar: la Version A siempre de este color
 col_E  = [0.00 0.35 0.70];
 col_E0 = [0.45 0.70 0.90];
 col_Es = [0.20 0.55 0.80];
@@ -200,8 +200,7 @@ try
     ax2 = subplot(4,1,2);
     plot(hA, rA.SOC_Bat(iA), '-', 'Color', col_A, 'LineWidth', 1.2); hold on
     plot(hE, rE.SOC_Bat(iE), '-', 'Color', col_E, 'LineWidth', 1.2);
-    yline(60, ':', 'Color', col_E, 'LineWidth', 0.8);
-    ylabel('SOC batería (%)'); legend({'A', 'C', 'reserva C (60 %)'}, 'Location', 'best'); grid on
+    ylabel('SOC batería (%)'); legend({'A', 'C'}, 'Location', 'best'); grid on
     % P_El y P_Grid ya llegan en kW, P_El en valor absoluto
     ax3 = subplot(4,1,3);
     plot(hA, rA.P_El(iA), '-', 'Color', col_A, 'LineWidth', 1.2); hold on
@@ -216,19 +215,19 @@ try
 
     f = figure('Name', 'F5 tanque', 'Color', 'w', 'Position', [100 100 900 360]);
     hold on
-    fill([0 168 168 0], [0 0 72 72], [1 0.9 0.9], 'EdgeColor', 'none');          % banda critica
+    fill([0 168 168 0], [0 0 72 72], [0.96 0.93 0.86], 'EdgeColor', 'none');    % franja por debajo del nivel critico
     plot(rA.t_horas, rA.LOH_High, '-', 'Color', col_A, 'LineWidth', 1.1);
     plot(rE.t_horas, rE.LOH_High, '-', 'Color', col_E, 'LineWidth', 1.1);
-    yline(0, 'k-'); yline(72, 'r--', 'nivel crítico');
+    yline(0, 'k-'); yline(72, '--', 'nivel crítico', 'Color', [0.55 0.42 0.12]);
     xlabel('Hora de la semana'); ylabel('Tanque de alta (%)'); xlim([0 168]);
-    legend({'zona crítica', 'A', 'C'}, 'Location', 'best');
+    legend({'por debajo del nivel crítico', 'A', 'C'}, 'Location', 'best');
     % los integradores de los tanques no saturan a cero: el tramo negativo es
     % el hidrogeno servido sin inventario, que es lo que mide kg_H2_no_servido
     yl = ylim;
     if yl(1) < 0
         fill([0 168 168 0], [yl(1) yl(1) 0 0], [0.93 0.93 0.93], 'EdgeColor', 'none', ...
             'FaceAlpha', 0.6, 'HandleVisibility', 'off');
-        text(3, yl(1)*0.55, 'inventario negativo = H_2 no servido', 'FontSize', 8, ...
+        text(3, yl(1)*0.55, 'inventario negativo = H_2 comprado fuera', 'FontSize', 8, ...
             'Color', [0.35 0.35 0.35]);
         uistack(findobj(gca, 'Type', 'line'), 'top');
     end

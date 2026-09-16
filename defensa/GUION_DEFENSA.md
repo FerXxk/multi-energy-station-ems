@@ -18,7 +18,7 @@ El marco ya pone fechas. La Hoja de Ruta del Hidrógeno española fija entre cie
 
 El problema es esa fragmentación: cada vector arrastra hoy su propia infraestructura y su propia inversión.
 
-Y ya hay precedentes de integrarlas. Repsol inauguró en dos mil veinticinco la estación de Morro Jable, en Fuerteventura: fotovoltaica, baterías, pila de hidrógeno y recarga eléctrica. Es casi la combinación de OASIS, a menor escala y sin electrolizador propio.
+Y ya hay precedentes. Repsol inauguró en dos mil veinticinco la estación de Morro Jable, en Fuerteventura: fotovoltaica, baterías, pila de hidrógeno y recarga eléctrica. Es casi la combinación de OASIS, a menor escala y sin electrolizador propio.
 
 Con esa integración el reto deja de ser de dimensionamiento y pasa a ser de operación: decidir, en cada instante, de dónde sale cada kilovatio.
 
@@ -148,7 +148,7 @@ La Versión B es la misma heurística con las dos previsiones metidas dentro. No
 
 La previsión solar entra en el reparto del excedente: antes dependía solo del estado de carga de ese instante; ahora, si la previsión anticipa que el excedente va a caer, el reparto se desplaza hacia la batería antes de que caiga. Y la de precio gobierna un arbitraje de batería.
 
-B tiene una victoria y un empate. La victoria es el servicio de hidrógeno, en treinta y nueve de cuarenta pares, y lo importante no es el tamaño sino que escala con la calidad de la previsión: con el oráculo se multiplica por diez. El mecanismo está bien planteado; lo que limita es la predicción.
+B tiene una victoria y un empate. La victoria es el servicio de hidrógeno, en treinta y nueve de cuarenta pares, y lo importante no es el tamaño sino que escala con la calidad de la previsión: con el oráculo se multiplica por diez. Lo que limita es la predicción, no el diseño.
 
 El empate es el coste, y de ahí sale la regla de diseño que aplico después: la primera versión del arbitraje traducía «el precio va a subir» en una acción de tamaño fijo, y empeoraba el coste, más cuanto mejor era la previsión. Una acción disparada por una previsión tiene que estar condicionada, y su tamaño salir del margen económico disponible.
 
@@ -168,15 +168,15 @@ El motivo está en el orden del código: la batería cubre primero los vehículo
 
 ## Diapositiva 15 · Versión C: separar de dónde sale la energía de cuándo conviene producir
 
-La Versión C separa dos decisiones que la heurística tomaba juntas: de dónde sale la energía del electrolizador y cuándo conviene producir. En pantalla, los cuatro pasos de la lógica común, con los dos que sustituyo en ámbar. Cada uno tiene su interruptor.
+La Versión C separa dos decisiones que la heurística tomaba juntas: de dónde sale la energía del electrolizador y cuándo conviene producir. En pantalla, los cuatro pasos de la lógica común, con los dos que sustituyo en ámbar.
 
-El primero son diez líneas: la carga que crea la decisión de producir hidrógeno se le ofrece a la batería antes que a la red, mientras el estado de carga esté por encima del sesenta por ciento. Ese sesenta no es arbitrario, sale del contrafactual del diagnóstico anterior.
+El primero son diez líneas: la carga que crea la decisión de producir hidrógeno se le ofrece a la batería antes que a la red, mientras el estado de carga esté por encima del sesenta por ciento. Ese sesenta sale del contrafactual del diagnóstico anterior.
 
 El segundo es un planificador: estima cuánto hidrógeno falta y cuánto excedente gratis viene, y de ahí salen las horas de electrolizador que hay que comprar a la red, que se colocan en las más baratas del horizonte.
 
-Conviene precisar de dónde sale ese precio. El mercado diario publica sobre la una de la tarde las veinticuatro horas del día siguiente: la parte del horizonte que ya está publicada se usa tal cual, y solo se predice el tramo que aún no ha salido a mercado.
+Conviene precisar de dónde sale ese precio. El mercado diario publica sobre la una de la tarde las veinticuatro horas del día siguiente: la parte del horizonte ya publicada se usa tal cual, y solo se predice el tramo que aún no ha salido a mercado.
 
-Y lo que hace defendible la regla es que solo usa el orden: la decisión es «estoy entre las ene más baratas, sí o no». Eso no cambia si la previsión falla en el nivel mientras acierte en el orden. Sumarle diez euros a todas las horas da el mismo plan.
+Y lo que hace defendible la regla es que solo usa el orden: la decisión es «estoy entre las ene más baratas, sí o no», y eso no cambia si la previsión falla en el nivel mientras acierte en el orden.
 
 ---
 
@@ -184,11 +184,13 @@ Y lo que hace defendible la regla es que solo usa el orden: la decisión es «es
 
 Los resultados de la Versión C, sobre siete días y veinte pares escenario-semilla.
 
-Coste total con hidrógeno: menos cincuenta y dos euros con tres por semana, un trece coma nueve por ciento, y gana en los veinte pares, con una p por debajo de una diezmilésima. Cinco veces el umbral de relevancia. Importa un cincuenta y cuatro por ciento menos y la autosuficiencia sube del ochenta y siete coma siete al noventa y cuatro coma tres.
+La figura es la diferencia de coste de cada versión frente a la A, escenario por escenario, y la banda gris es el umbral de relevancia. La Versión B cae dentro de la banda en los cuatro: en coste empata. La C se sale por la izquierda en los cuatro, y por bastante.
 
-En la figura, cada línea une los dos miembros de un par. Mejora en los cuatro escenarios, y se ahorra más donde más caro compraba el electrolizador.
+En la tabla, las tres métricas: cincuenta y dos euros con tres menos por semana, un trece coma nueve por ciento, ganando en los veinte pares; un cincuenta y cuatro por ciento menos de importación; y la autosuficiencia del ochenta y siete coma siete al noventa y cuatro coma tres.
 
-Y la mejora tiene un precio, que declaro aquí mismo: la batería cicla dos coma dos veces más, con la degradación sin modelar, y el hidrógeno no servido pasa de cero coma ocho a tres coma uno kilogramos por semana en el nublado. Está dentro de la métrica de coste, pero es un dato de operación.
+El orden entre escenarios no lo fija el excedente disponible, sino el precio al que compraba el electrolizador: se ahorra más donde más caro compraba.
+
+Y la mejora tiene un precio, que declaro yo: la batería cicla dos coma dos veces más, con la degradación sin modelar, y en el nublado hay que reponer desde fuera tres kilos de hidrógeno a la semana en vez de uno. Valorado dentro del coste, pero es un dato de operación.
 
 ---
 
@@ -208,11 +210,11 @@ Y añadir la red neuronal de precio: cero. Las dos tandas salen idénticas a pre
 
 Las limitaciones, agrupadas por a qué afectan.
 
-Del modelo físico: los tanques usan gas ideal, que a seiscientos bar sobrestima un cuarenta y cinco por ciento la masa, así que la autonomía simulada es optimista; y la pila de combustible no arranca en ninguna simulación, de modo que el modo isla queda sin ejercitar.
+Del modelo físico: algunos bloques asumen simplificaciones, la más relevante la ecuación de gas ideal en los tanques, que hace caber más hidrógeno del que cabría de verdad. Y la pila no llega a arrancar, que no es un fallo del gestor sino la decisión correcta: recuperar electricidad a partir del hidrógeno es el camino más caro y con más pérdidas de la estación, y mientras haya batería o red nunca compensa. La pila tiene sentido en modo isla, y ese modo no lo ejercito.
 
-De los datos: la irradiancia viene de un reanálisis que no está disponible en tiempo real, y la demanda de hidrógeno se aproxima por analogía con la de vehículos eléctricos.
+De los datos: la irradiancia sale de un reanálisis, que es lo que hace falta para entrenar, pero no es la señal que tendría la estación en tiempo real; cambiarla por una previsión operativa no toca el modelo, solo la entrada. Y la demanda de hidrógeno se construye por analogía con la eléctrica porque aún no hay flota de la que medirla; lo importante es que es la misma para las tres versiones, así que no favorece a ninguna.
 
-Y de alcance: el coste no incluye peajes ni cargos, así que las cifras son comparativas; y la referencia es una implementación concreta, no un algoritmo establecido.
+Y de alcance: el coste no incluye peajes ni cargos, así que las cifras son comparativas. Y los umbrales están ajustados a esta instalación: llevar el algoritmo a otra exige recalibrarlos, no solo copiarlo.
 
 ---
 
@@ -220,13 +222,15 @@ Y de alcance: el coste no incluye peajes ni cargos, así que las cifras son comp
 
 La pregunta del trabajo era si una previsión con redes LSTM mejora a un EMS heurístico ya maduro. La respuesta, medida, son estas tres conclusiones.
 
-La primera, sobre las redes: entrené y validé dos modelos contra líneas base no triviales, ninguno las bate por sí solo, y la ponderación con el predictor ingenuo es lo que recupera el resultado. Eso, más la corrección del lazo cerrado, es lo que se despliega.
+Dos modelos entrenados, validados y corregidos, cuya señal combinada supera a la línea base en solar y en precio, y es la que consume el simulador.
 
-La segunda, sobre los gestores: tres versiones comparadas sobre la misma instalación. La predictiva mejora la seguridad de suministro de hidrógeno; la final reduce el coste semanal un trece coma nueve por ciento en los veinte casos.
+Tres gestores comparados sobre la misma instalación: la predictiva mejora la seguridad de suministro de hidrógeno, y la final reduce el coste semanal casi un catorce por ciento en los veinte casos.
 
-Y la tercera, que da sentido a las otras dos: la cadena de medida permite atribuir esa mejora pieza a pieza. El valor de una previsión depende de en qué decisión se inserte y de qué información no esté ya disponible.
+Y la tercera, que da sentido a las otras dos: la cadena de medida permite atribuir la mejora pieza a pieza. El valor de una previsión depende de en qué decisión se inserte y de qué información no esté ya disponible.
 
-Muchas gracias por su atención. Quedo a su disposición.
+Cuatro líneas futuras. Aislar la previsión solar, dándole al planificador el excedente real en vez del previsto, para medir por separado lo que hoy va sumado. Dar al tanque un nivel objetivo antes de un día nublado previsto, que corregiría el único indicador que C empeora. Modelar la degradación de la batería. Y ampliar el horizonte a cuarenta y ocho horas con control predictivo: es el único tramo donde el mercado ya no está publicado y una red de precio volvería a aportar.
+
+Muchas gracias por su atención.
 
 ---
 
@@ -242,9 +246,5 @@ Para explicar el mecanismo de C con un caso concreto.
 
 ### R3 · Nivel del tanque de alta en la semana nublada
 
-Para la pregunta sobre el servicio de hidrógeno que empeora. SI PREGUNTAN POR EL NIVEL NEGATIVO: es un artefacto declarado del modelo — los integradores de los tanques no saturan a cero, así que el inventario puede bajar de cero y el modelo sirve un hidrógeno que físicamente no tiene. Ese tramo es exactamente lo que mide el indicador de hidrógeno no servido, que se valora a 8 €/kg dentro de la métrica principal. Activar la saturación queda como corrección pendiente del modelo, y está declarado en la memoria.
-
-### R4 · Predicción de precio en los cuatro días de campaña
-
-Para preguntas sobre la calidad de la red de precio y sobre la sub-dispersión.
+Para la pregunta sobre el servicio de hidrógeno que empeora. C pasa más tiempo por debajo del nivel crítico que A: es la contrapartida del ahorro y está valorada dentro de la métrica de coste. SI PREGUNTAN POR EL TRAMO NEGATIVO: es un artefacto declarado del modelo — los integradores de los tanques no saturan a cero, así que el inventario puede bajar de cero. Ese tramo es exactamente el hidrógeno que hay que comprar fuera, y se valora a 8 €/kg dentro de la métrica principal. Activar la saturación queda como corrección pendiente, y está declarado en la memoria.
 
