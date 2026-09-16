@@ -79,13 +79,13 @@ try
         end
         plot(repmat(ie-0.18, n, 1), yA(1:n), 'o', 'MarkerFaceColor', 'w', 'MarkerEdgeColor', col_A*0.7, 'MarkerSize', 4);
         plot(repmat(ie+0.18, n, 1), yE(1:n), 'o', 'MarkerFaceColor', 'w', 'MarkerEdgeColor', col_E*0.7, 'MarkerSize', 4);
-        text(ie, max([yA; yE]) + 45, num_es(mE(ie) - mA(ie), '%+.1f EUR'), ...
+        text(ie, max([yA; yE]) + 45, num_es(mE(ie) - mA(ie), '%+.1f €'), ...
             'HorizontalAlignment', 'center', 'VerticalAlignment', 'bottom', 'FontSize', 9, 'FontWeight', 'bold');
     end
     yline(0, 'k-', 'LineWidth', 0.5);
     set(gca, 'XTick', 1:4, 'XTickLabel', esc_cortos);
-    ylabel('Coste total con H_2 (EUR / semana)');
-    legend({'Version A (heuristica)', 'Version C'}, 'Location', 'best');
+    ylabel({'Resultado económico (€ / semana)', 'negativo = ingreso neto por exportación'});
+    legend({'Versión A (heurística)', 'Versión C'}, 'Location', 'best');
     grid on; box off
     guardar(f, ruta_img, 'fig_res_coste_escenario.png', opciones.guardar);
 catch ME
@@ -104,7 +104,7 @@ try
     assert(~any(isnan(m)), 'faltan versiones de la ablacion en el CSV');
     salto = diff(m);                     % lo que aporta cada componente
     acum  = [0, cumsum(salto)];          % ahorro acumulado respecto a A
-    etiq  = {'bateria -> electrolizador', '+ programacion (persistencia)', '+ LSTM de precio', 'C frente a A'};
+    etiq  = {'batería → electrolizador', '+ programación (persistencia)', '+ LSTM de precio', 'C frente a A'};
     cols  = {col_E0, col_Es, col_E};
     UMBRAL = 9.33;                       % umbral de relevancia economica (EUR/semana)
 
@@ -120,26 +120,26 @@ try
             patch([ie-0.32 ie+0.32 ie+0.32 ie-0.32], [y0 y0 y1 y1], cols{ie}, 'EdgeColor', 'none');
         end
         plot([ie+0.32, ie+1-0.32], [y1 y1], 'k:', 'LineWidth', 0.8);
-        txt = num_es(salto(ie), '%+.1f EUR');
+        txt = num_es(salto(ie), '%+.1f €');
         if abs(salto(ie)) < UMBRAL, txt = [txt ' *']; marca = '*'; end %#ok<AGROW>
         text(ie, min(y0, y1) - 0.03*esc, txt, 'HorizontalAlignment', 'center', ...
             'VerticalAlignment', 'top', 'FontSize', 9, 'FontWeight', 'bold');
     end
     patch([3.68 4.32 4.32 3.68], [0 0 acum(4) acum(4)], col_E, 'EdgeColor', 'none');
-    text(4, acum(4) - 0.03*esc, num_es(acum(4), '%+.1f EUR'), 'HorizontalAlignment', 'center', ...
+    text(4, acum(4) - 0.03*esc, num_es(acum(4), '%+.1f €'), 'HorizontalAlignment', 'center', ...
         'VerticalAlignment', 'top', 'FontSize', 9, 'FontWeight', 'bold');
     yline(0, 'k-', 'LineWidth', 0.8);
-    text(0.55, -0.02*esc, num_es(m(1), 'A = %.1f EUR/semana'), 'HorizontalAlignment', 'left', ...
+    text(0.55, -0.02*esc, num_es(m(1), 'A = %.1f €/semana'), 'HorizontalAlignment', 'left', ...
         'VerticalAlignment', 'top', 'FontSize', 9, 'Color', col_A);
-    text(4.40, acum(4)/2, num_es(m(4), 'C = %.1f EUR/semana'), 'HorizontalAlignment', 'left', ...
+    text(4.40, acum(4)/2, num_es(m(4), 'C = %.1f €/semana'), 'HorizontalAlignment', 'left', ...
         'VerticalAlignment', 'middle', 'FontSize', 9, 'Color', col_E);
     if ~isempty(marca)
-        text(0.55, min(acum) - 0.16*esc, num_es(UMBRAL, '* por debajo del umbral de relevancia (%.2f EUR/semana)'), ...
+        text(0.55, min(acum) - 0.16*esc, num_es(UMBRAL, '* por debajo del umbral de relevancia (%.2f €/semana)'), ...
             'HorizontalAlignment', 'left', 'FontSize', 8, 'Color', [0.35 0.35 0.35]);
     end
     xlim([0.5 5.3]); ylim([min(acum) - 0.22*esc, 0.10*esc]);
     set(gca, 'XTick', 1:4, 'XTickLabel', etiq, 'XTickLabelRotation', 12);
-    ylabel('Ahorro acumulado frente a A (EUR / semana)');
+    ylabel('Ahorro acumulado frente a A (€ / semana)');
     grid on; box off
     guardar(f, ruta_img, 'fig_res_ablacion.png', opciones.guardar);
 catch ME
@@ -172,8 +172,8 @@ try
     hb(1).FaceColor = [0.85 0.60 0.20]; hb(2).FaceColor = [0.20 0.45 0.75];
     hb(3).FaceColor = [0.55 0.55 0.55]; hb(4).FaceColor = [0.35 0.70 0.45];
     set(gca, 'XTickLabel', etiq);
-    ylabel('Energia importada (kWh / semana)');
-    legend({'a vehiculos', 'a electrolizador', 'a compresor', 'a bateria'}, 'Location', 'northeast');
+    ylabel('Energía importada (kWh / semana)');
+    legend({'a vehículos', 'a electrolizador', 'a compresor', 'a batería'}, 'Location', 'northeast');
     for iv = 1:3
         text(iv, sum(M(iv,:)) + 30, sprintf('%.0f kWh', sum(M(iv,:))), 'HorizontalAlignment', 'center', 'FontSize', 9);
     end
@@ -195,13 +195,13 @@ try
 
     f = figure('Name', 'F4 dia nublado', 'Color', 'w', 'Position', [100 100 900 720]);
     ax1 = subplot(4,1,1);
-    plot(hA, rA.Precio(iA), 'k-', 'LineWidth', 1); ylabel('Precio (EUR/MWh)'); grid on
+    plot(hA, rA.Precio(iA), 'k-', 'LineWidth', 1); ylabel('Precio (€/MWh)'); grid on
     yline(149, 'r--', 'umbral 149', 'LabelHorizontalAlignment', 'left');
     ax2 = subplot(4,1,2);
     plot(hA, rA.SOC_Bat(iA), '-', 'Color', col_A, 'LineWidth', 1.2); hold on
     plot(hE, rE.SOC_Bat(iE), '-', 'Color', col_E, 'LineWidth', 1.2);
     yline(60, ':', 'Color', col_E, 'LineWidth', 0.8);
-    ylabel('SOC bateria (%)'); legend({'A', 'C', 'reserva C (60 %)'}, 'Location', 'best'); grid on
+    ylabel('SOC batería (%)'); legend({'A', 'C', 'reserva C (60 %)'}, 'Location', 'best'); grid on
     % P_El y P_Grid ya llegan en kW, P_El en valor absoluto
     ax3 = subplot(4,1,3);
     plot(hA, rA.P_El(iA), '-', 'Color', col_A, 'LineWidth', 1.2); hold on
@@ -210,7 +210,7 @@ try
     ax4 = subplot(4,1,4);
     plot(hA, max(rA.P_Grid(iA), 0), '-', 'Color', col_A, 'LineWidth', 1.2); hold on
     plot(hE, max(rE.P_Grid(iE), 0), '-', 'Color', col_E, 'LineWidth', 1.2);
-    ylabel('Importacion de red (kW)'); xlabel('Hora del dia'); grid on
+    ylabel('Importación de red (kW)'); xlabel('Hora del día'); grid on
     linkaxes([ax1 ax2 ax3 ax4], 'x'); xlim([0 24]);
     guardar(f, ruta_img, 'fig_res_dia_nublado.png', opciones.guardar);
 
@@ -219,9 +219,19 @@ try
     fill([0 168 168 0], [0 0 72 72], [1 0.9 0.9], 'EdgeColor', 'none');          % banda critica
     plot(rA.t_horas, rA.LOH_High, '-', 'Color', col_A, 'LineWidth', 1.1);
     plot(rE.t_horas, rE.LOH_High, '-', 'Color', col_E, 'LineWidth', 1.1);
-    yline(0, 'k-'); yline(72, 'r--', 'nivel critico');
+    yline(0, 'k-'); yline(72, 'r--', 'nivel crítico');
     xlabel('Hora de la semana'); ylabel('Tanque de alta (%)'); xlim([0 168]);
-    legend({'zona critica', 'A', 'C'}, 'Location', 'best');
+    legend({'zona crítica', 'A', 'C'}, 'Location', 'best');
+    % los integradores de los tanques no saturan a cero: el tramo negativo es
+    % el hidrogeno servido sin inventario, que es lo que mide kg_H2_no_servido
+    yl = ylim;
+    if yl(1) < 0
+        fill([0 168 168 0], [yl(1) yl(1) 0 0], [0.93 0.93 0.93], 'EdgeColor', 'none', ...
+            'FaceAlpha', 0.6, 'HandleVisibility', 'off');
+        text(3, yl(1)*0.55, 'inventario negativo = H_2 no servido', 'FontSize', 8, ...
+            'Color', [0.35 0.35 0.35]);
+        uistack(findobj(gca, 'Type', 'line'), 'top');
+    end
     grid on; box off
     guardar(f, ruta_img, 'fig_res_tanque_nublado.png', opciones.guardar);
 catch ME
@@ -267,21 +277,25 @@ try
         xlim([0 23]); ylim([ymin_p ymax_p]); grid on; box off
         set(gca, 'XTick', 0:6:18);
         title(sprintf('E%d  %s', ie, esc_cortos{ie}), 'FontWeight', 'normal', 'FontSize', 10);
-        text(0.5, ymax_p*0.93, num_es(max(P{ie}) - min(P{ie}), 'recorrido %.0f EUR/MWh'), 'FontSize', 8, 'Color', [0.35 0.35 0.35]);
-        if ie == 1, ylabel('Precio (EUR/MWh)'); end
+        text(0.5, ymax_p*0.93, num_es(max(P{ie}) - min(P{ie}), 'recorrido %.0f €/MWh'), 'FontSize', 8, 'Color', [0.35 0.35 0.35]);
+        if ie == 1, ylabel('Precio (€/MWh)'); end
 
         subplot(2, 4, 4 + ie)
-        area(hn{ie}, A{ie}, 'FaceColor', [0.98 0.80 0.35], 'EdgeColor', 'none'); hold on
-        plot(hn{ie}, C{ie}, '--', 'Color', [0.55 0.45 0.20], 'LineWidth', 1);
+        h_area = area(hn{ie}, A{ie}, 'FaceColor', [0.98 0.80 0.35], 'EdgeColor', 'none'); hold on
+        h_clr  = plot(hn{ie}, C{ie}, '--', 'Color', [0.55 0.45 0.20], 'LineWidth', 1);
+        if ie == 1, h_leg = [h_area, h_clr]; end
         xlim([0 23]); ylim([0 ymax_i]); grid on; box off
         set(gca, 'XTick', 0:6:18);
         text(0.5, ymax_i*0.90, num_es(kt(ie), 'k_t = %.2f'), 'FontSize', 8, 'Color', [0.35 0.35 0.35]);
-        xlabel('Hora del dia');
-        if ie == 1
-            ylabel('Irradiancia (Wh/m^2)');
-            legend({'cielo real', 'cielo claro'}, 'Location', 'southoutside', 'Orientation', 'horizontal', 'Box', 'off');
-        end
+        xlabel('Hora del día');
+        if ie == 1, ylabel('Irradiancia (Wh/m^2)'); end
     end
+    % leyenda comun a los cuatro paneles: dentro del primero le robaba altura
+    % y descolgaba su eje respecto a los otros tres
+    lg = legend(h_leg, {'cielo real', 'cielo claro'}, 'Orientation', 'horizontal', 'Box', 'off');
+    lg.Units = 'normalized';
+    lg.Position(1) = 0.5 - lg.Position(3)/2;
+    lg.Position(2) = 0.01;
     guardar(f, ruta_img, 'fig_met_escenarios.png', opciones.guardar);
 catch ME
     cerrar(f); warning('[FIG] F6 no generada (linea %d): %s', ME.stack(1).line, ME.message);
@@ -303,25 +317,25 @@ try
     plot(td, P_imp,  '-', 'Color', [0.10 0.10 0.10], 'LineWidth', 0.8);
     plot(td, -P_exp, '-', 'Color', [0.40 0.70 0.45], 'LineWidth', 0.6);
     ylabel('Potencia (kW)'); grid on
-    legend({'PV', 'electrolizador', 'vehiculos', 'importacion', 'exportacion'}, ...
+    legend({'PV', 'electrolizador', 'vehículos', 'importación', 'exportación'}, ...
         'Orientation', 'horizontal', 'Location', 'northoutside', 'Box', 'off');
 
     ax2 = subplot(4,1,2);
     plot(td, r.Precio, '-', 'Color', [0.15 0.15 0.15], 'LineWidth', 0.8);
-    ylabel('Precio (EUR/MWh)'); grid on
+    ylabel('Precio (€/MWh)'); grid on
 
     ax3 = subplot(4,1,3);
     plot(td, r.SOC_Bat, '-', 'Color', col_E, 'LineWidth', 1.1); hold on
     yline(60, ':', 'Color', col_E, 'LineWidth', 0.8, 'Label', 'reserva 60 %', 'FontSize', 8);
-    ylabel('SOC bateria (%)'); ylim([0 100]); grid on
+    ylabel('SOC batería (%)'); ylim([0 100]); grid on
 
     ax4 = subplot(4,1,4);
     fill([0 tf tf 0], [0 0 72 72], [1 0.92 0.92], 'EdgeColor', 'none'); hold on
     plot(td, r.LOH_High, '-', 'Color', [0.10 0.45 0.70], 'LineWidth', 1.1);
     plot(td, r.LOH_Low,  '-', 'Color', [0.75 0.35 0.75], 'LineWidth', 0.9);
     yline(72, 'r--', 'LineWidth', 0.8);
-    ylabel('Tanques de H_2 (%)'); xlabel('Dia de la simulacion'); grid on
-    legend({'zona critica', 'tanque de alta', 'tanque de baja'}, 'Location', 'best', 'Box', 'off');
+    ylabel('Tanques de H_2 (%)'); xlabel('Día de la simulación'); grid on
+    legend({'zona crítica', 'tanque de alta', 'tanque de baja'}, 'Location', 'best', 'Box', 'off');
 
     linkaxes([ax1 ax2 ax3 ax4], 'x'); xlim([0 tf]);
     set([ax1 ax2 ax3 ax4], 'XTick', 0:1:ceil(tf));
