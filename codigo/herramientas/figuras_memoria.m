@@ -291,11 +291,21 @@ try
         if ie == 1, ylabel('Irradiancia (Wh/m^2)'); end
     end
     % leyenda comun a los cuatro paneles: dentro del primero le robaba altura
-    % y descolgaba su eje respecto a los otros tres
-    lg = legend(h_leg, {'cielo real', 'cielo claro'}, 'Orientation', 'horizontal', 'Box', 'off');
+    % y descolgaba su eje respecto a los otros tres. Se sube el bloque de ejes
+    % para abrirle hueco abajo; si queda justa, tocar DESP_LEY.
+    DESP_LEY = 0.065;
+    ejes = findobj(f, 'Type', 'axes');
+    for ke = 1:numel(ejes)
+        pos = ejes(ke).Position;
+        pos(4) = pos(4) * (1 - DESP_LEY);
+        pos(2) = pos(2) + DESP_LEY;
+        ejes(ke).Position = pos;
+    end
+    lg = legend(h_leg, {'cielo real', 'cielo claro'}, 'Orientation', 'horizontal', ...
+        'Box', 'off', 'FontSize', 9);
     lg.Units = 'normalized';
     lg.Position(1) = 0.5 - lg.Position(3)/2;
-    lg.Position(2) = 0.01;
+    lg.Position(2) = 0.008;
     guardar(f, ruta_img, 'fig_met_escenarios.png', opciones.guardar);
 catch ME
     cerrar(f); warning('[FIG] F6 no generada (linea %d): %s', ME.stack(1).line, ME.message);
