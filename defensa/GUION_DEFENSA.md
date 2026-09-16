@@ -4,7 +4,7 @@
 
 Fernando Román Hidalgo · Tutor: Miguel Ángel Ridao Carlini · Dpto. de Ingeniería de Sistemas y Automática · ETSI, Universidad de Sevilla
 
-Duración medida sobre el texto real de este guion: **19:39** a 135 palabras/minuto (ritmo de defensa pausado), **17:55** a 148 ppm, que es el ritmo al que se acaba hablando con dos o tres ensayos. 19 diapositivas + 5 de reserva.
+Duración medida sobre el texto real de este guion: **19:54** a 135 palabras/minuto (ritmo de defensa pausado), **18:09** a 148 ppm, que es el ritmo al que se acaba hablando con dos o tres ensayos. 19 diapositivas + 5 de reserva.
 
 ---
 
@@ -21,24 +21,24 @@ No memorices palabra por palabra: memoriza la primera frase de cada diapositiva 
 | # | Diapositiva | Bloque | Duración | Acumulado |
 |---|---|---|---|---|
 | 1 | Estrategias de gestión energética para una estación de repostaje multi-energía | — | 0:29 | 0:29 |
-| 2 | El marco ya pone fechas; la infraestructura sigue separada por vector | PLANTEAMIENTO | 1:28 | 1:57 |
-| 3 | La estación OASIS, modelada en Simulink | PLANTEAMIENTO | 0:36 | 2:33 |
-| 4 | El EMS decide tres cosas, y es lo único que cambia entre versiones | PLANTEAMIENTO | 0:59 | 3:32 |
-| 5 | La demanda sale de sesiones reales de carga rápida, no de una hipótesis | DATOS | 1:01 | 4:33 |
-| 6 | Y los datos de entrenamiento, de dos fuentes públicas alineadas hora a hora | DATOS | 0:56 | 5:29 |
-| 7 | Dos redes con la misma arquitectura y parada temprana por validación | MODELOS LSTM | 0:48 | 6:17 |
+| 2 | El marco ya pone fechas; la infraestructura sigue separada por vector | PLANTEAMIENTO | 1:26 | 1:55 |
+| 3 | La estación OASIS, modelada en Simulink | PLANTEAMIENTO | 0:36 | 2:31 |
+| 4 | El EMS decide tres cosas, y es lo único que cambia entre versiones | PLANTEAMIENTO | 0:59 | 3:30 |
+| 5 | La demanda sale de sesiones reales de carga rápida, no de una hipótesis | DATOS | 1:01 | 4:31 |
+| 6 | Y los datos de entrenamiento, de dos fuentes públicas alineadas hora a hora | DATOS | 0:56 | 5:27 |
+| 7 | Dos redes con la misma arquitectura y parada temprana por validación | MODELOS LSTM | 0:50 | 6:17 |
 | 8 | El problema: ninguna de las dos redes bate sola a su línea base | MODELOS LSTM | 1:12 | 7:29 |
 | 9 | La solución: proyección física y ponderación con el naive | MODELOS LSTM | 1:08 | 8:37 |
 | 10 | Cuatro escenarios que cruzan recurso solar y régimen de precio | COMPARACIÓN | 0:49 | 9:26 |
-| 11 | Cuatro piezas sostienen todas las cifras que vienen a continuación | COMPARACIÓN | 1:28 | 10:54 |
-| 12 | Versión A: la referencia ya es una heurística madura | LOS TRES EMS | 0:54 | 11:48 |
-| 13 | Versión B: la previsión mejora sistemáticamente el servicio de hidrógeno | LOS TRES EMS | 1:11 | 12:59 |
-| 14 | La batería estaba al 85 % mientras el electrolizador compraba red | LOS TRES EMS | 1:14 | 14:13 |
-| 15 | Versión C: separar de dónde sale la energía de cuándo conviene producir | LOS TRES EMS | 1:12 | 15:25 |
-| 16 | Versión C: −13,9 % de coste semanal, en los veinte pares evaluados | LOS TRES EMS | 1:11 | 16:36 |
-| 17 | Y la mejora se puede atribuir pieza a pieza | LOS TRES EMS | 1:14 | 17:50 |
-| 18 | Limitaciones | LIMITACIONES | 0:49 | 18:39 |
-| 19 | Conclusiones | CONCLUSIONES | 1:00 | 19:39 |
+| 11 | Cuatro piezas sostienen todas las cifras que vienen a continuación | COMPARACIÓN | 1:33 | 10:59 |
+| 12 | Versión A: la referencia ya es una heurística madura | LOS TRES EMS | 0:54 | 11:53 |
+| 13 | Versión B: la previsión mejora sistemáticamente el servicio de hidrógeno | LOS TRES EMS | 1:11 | 13:04 |
+| 14 | La batería estaba al 85 % mientras el electrolizador compraba red | LOS TRES EMS | 1:14 | 14:18 |
+| 15 | Versión C: separar de dónde sale la energía de cuándo conviene producir | LOS TRES EMS | 1:12 | 15:30 |
+| 16 | Versión C: −13,9 % de coste semanal, en los veinte pares evaluados | LOS TRES EMS | 1:11 | 16:41 |
+| 17 | Y la mejora se puede atribuir pieza a pieza | LOS TRES EMS | 1:14 | 17:55 |
+| 18 | Limitaciones | LIMITACIONES | 0:49 | 18:44 |
+| 19 | Conclusiones | CONCLUSIONES | 1:10 | 19:54 |
 
 **Marcas de control:** al terminar la 9 (la solución de las LSTM) deberías ir por **8:30**; al terminar la 14 (el diagnóstico), por **14:15**. Si vas más de un minuto por encima en cualquiera de las dos, aplica los recortes del final.
 
@@ -60,7 +60,7 @@ No memorices palabra por palabra: memoriza la primera frase de cada diapositiva 
 
 ---
 
-## 2 · El marco ya pone fechas; la infraestructura sigue separada por vector  —  1:28
+## 2 · El marco ya pone fechas; la infraestructura sigue separada por vector  —  1:26
 
 *Bloque: PLANTEAMIENTO · 1 de 7*
 
@@ -74,7 +74,7 @@ No memorices palabra por palabra: memoriza la primera frase de cada diapositiva 
 >
 > El marco regulatorio ya pone fechas. La Hoja de Ruta del Hidrógeno española fija entre cien y ciento cincuenta hidrogeneras públicas para dos mil treinta, y sitúa los corredores de repostaje verde como línea prioritaria. El PNIEC fija cinco millones y medio de vehículos eléctricos para esa misma fecha, y el reglamento europeo AFIR convierte el despliegue de recarga en objetivos vinculantes.
 >
-> El problema es que las dos tecnologías van desacompasadas y cada una tiene hoy su propia infraestructura, lo que fragmenta la inversión.
+> El problema es esa fragmentación: cada vector arrastra hoy su propia infraestructura y su propia inversión.
 >
 > Y ya hay precedentes de integrarlas. Repsol inauguró en enero de dos mil veinticinco la estación de Morro Jable, en Fuerteventura: fotovoltaica, baterías, pila de hidrógeno y recarga eléctrica. Es prácticamente la combinación de componentes de OASIS, a menor escala y sin electrolizador propio.
 >
@@ -164,17 +164,17 @@ No memorices palabra por palabra: memoriza la primera frase de cada diapositiva 
 
 ---
 
-## 7 · Dos redes con la misma arquitectura y parada temprana por validación  —  0:48
+## 7 · Dos redes con la misma arquitectura y parada temprana por validación  —  0:50
 
 *Bloque: MODELOS LSTM · 3 de 7*
 
-**[PANTALLA]**  Figuras: `TrainingSol.png` y `TrainingPrecio.png`. tres líneas de apoyo bajo las figuras.
+**[PANTALLA]**  Figuras: `TrainingSol_rmse.png` y `TrainingPrecio_rmse.png`. tres líneas de apoyo bajo las figuras.
 
 **[DICES]**
 
 > Las dos redes comparten arquitectura: dos capas LSTM apiladas, de ciento veintiocho y sesenta y cuatro unidades, con dropout, capa densa y salida de veinticuatro valores, que es el horizonte de un día.
 >
-> Las dos se entrenan con Adam y paran por criterio de validación: la solar en la época veintiuno de trescientas, la de precio en la veintinueve de doscientas. Las curvas de entrenamiento y validación se mantienen superpuestas: no hay sobreajuste.
+> Las dos se entrenan con Adam y paran por criterio de validación: la solar en la época veintiuno de trescientas, la de precio en la veintinueve de doscientas. En pantalla, la curva de RMSE: azul entrenamiento, negro validación. No se separan: no hay sobreajuste.
 >
 > Una diferencia que sí importa: el modelo solar puede imponer que la irradiancia predicha no sea negativa. El de precio no, porque el precio spot admite negativos, y eso obliga después a un tratamiento distinto.
 
@@ -242,7 +242,7 @@ No memorices palabra por palabra: memoriza la primera frase de cada diapositiva 
 
 ---
 
-## 11 · Cuatro piezas sostienen todas las cifras que vienen a continuación  —  1:28
+## 11 · Cuatro piezas sostienen todas las cifras que vienen a continuación  —  1:33
 
 *Bloque: COMPARACIÓN · 4 de 7*
 
@@ -252,7 +252,7 @@ No memorices palabra por palabra: memoriza la primera frase de cada diapositiva 
 
 > Antes de las cifras, las cuatro piezas que las sostienen.
 >
-> La primera es la comparación pareada. La semilla ene genera exactamente el mismo perfil de demanda en todas las versiones: los mismos vehículos, a las mismas horas, con las mismas energías. Eso permite calcular la diferencia par a par en lugar de comparar medias: el ruido de la demanda se cancela en la resta y el contraste gana potencia.
+> La primera es la comparación pareada, que es lo que ven en el esquema: la semilla ene genera exactamente el mismo perfil de demanda en todas las versiones, los mismos vehículos a las mismas horas, así que la diferencia se calcula par a par. El ruido de la demanda es común a los dos miembros, se cancela en la resta, y el contraste gana potencia. Veinte pares: cuatro escenarios por cinco semillas.
 >
 > La segunda es el test de Wilcoxon, de rangos con signo. Empecé con un t-test y lo abandoné: tres semillas del escenario nublado dominaban la media, con medias hasta veinte veces la mediana. El contraste describía esas tres tiradas, no a la población.
 >
@@ -394,7 +394,7 @@ No memorices palabra por palabra: memoriza la primera frase de cada diapositiva 
 >
 > Y añadir la red neuronal de precio: cero. Las dos tandas salen idénticas a precisión de máquina en los cuarenta indicadores. La razón es de disponibilidad de información: el mercado diario publica a las trece horas el precio del día siguiente, así que entre once y treinta y cinco horas del horizonte no hay nada que predecir.
 
-**[ENTREGA — no se dice en voz alta]** Sin dramatizar el cero. Es un dato de la atribución, y la atribución es la aportación metodológica del trabajo.
+**[ENTREGA — no se dice en voz alta]** Sin dramatizar el cero. Es un dato de la atribución, y la atribución es la aportación metodológica del trabajo. SI TE ATACAN EL TÍTULO («habla de LSTM y el 90 % no la usa»): el título dice CUANTIFICAR la mejora de la predicción, y cuantificar incluye que salga pequeña. B sí usa previsión y sí mejora, pero en servicio de hidrógeno, no en coste. Ver pregunta 26.
 
 ---
 
@@ -414,11 +414,11 @@ No memorices palabra por palabra: memoriza la primera frase de cada diapositiva 
 >
 > Y de alcance: el coste no incluye peajes ni cargos, así que las cifras son comparativas; y la referencia es una implementación concreta, no un algoritmo establecido.
 
-**[ENTREGA — no se dice en voz alta]** Rápido y sin dramatizar. Cada una de estas seis es una pregunta que el tribunal ya no necesita hacerte. SI PREGUNTAN POR LA PILA: el bloque tiene 120 celdas de 600 cm² y 600 A; su curva de polarización da el máximo en ~156 A y son unos 11 kW, no los 130 del criterio de diseño. No contamina ningún resultado porque la pila no arranca nunca, pero el modo isla no está cubierto ni sobre el papel del modelo.
+**[ENTREGA — no se dice en voz alta]** Rápido y sin dramatizar. Cada una de estas seis es una pregunta que el tribunal ya no necesita hacerte. SI PREGUNTAN POR EL GAS IDEAL: la cifra exacta con tablas NIST es 40 %, no 45 (Z = 1,40 a 600 bar y 15 °C); el 45 sale de interpolar entre dos densidades publicadas. Dala tú. SI PREGUNTAN POR LA PILA: el bloque tiene 120 celdas de 600 cm² y 600 A; su curva de polarización da el máximo en ~156 A y son unos 11 kW, no los 130 del criterio de diseño. No contamina ningún resultado porque la pila no arranca nunca, pero el modo isla no está cubierto ni sobre el papel del modelo.
 
 ---
 
-## 19 · Conclusiones  —  1:00
+## 19 · Conclusiones  —  1:10
 
 *Bloque: CONCLUSIONES · 7 de 7*
 
@@ -428,7 +428,7 @@ No memorices palabra por palabra: memoriza la primera frase de cada diapositiva 
 
 **[DICES]**
 
-> Tres conclusiones.
+> La pregunta del trabajo era si una previsión con redes LSTM mejora a un EMS heurístico ya maduro. La respuesta, medida, son estas tres conclusiones.
 >
 > La primera, sobre las redes: entrené y validé dos modelos contra líneas base no triviales, ninguno las bate por sí solo, y la ponderación con el predictor ingenuo es lo que recupera el resultado. Eso, más la corrección del lazo cerrado, es lo que se despliega.
 >
