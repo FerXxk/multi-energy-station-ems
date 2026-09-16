@@ -215,12 +215,14 @@ try
 
     f = figure('Name', 'F5 tanque', 'Color', 'w', 'Position', [100 100 900 360]);
     hold on
-    fill([0 168 168 0], [0 0 72 72], [0.96 0.93 0.86], 'EdgeColor', 'none');    % franja por debajo del nivel critico
+    fill([0 168 168 0], [0 0 72 72], [0.98 0.965 0.93], 'EdgeColor', 'none');   % franja por debajo del nivel critico
     plot(rA.t_horas, rA.LOH_High, '-', 'Color', col_A, 'LineWidth', 1.1);
     plot(rE.t_horas, rE.LOH_High, '-', 'Color', col_E, 'LineWidth', 1.1);
-    yline(0, 'k-'); yline(72, '--', 'nivel crítico', 'Color', [0.55 0.42 0.12]);
+    yline(0, 'k-'); yline(72, '--', 'nivel crítico', 'Color', [0.55 0.42 0.12], ...
+        'LabelHorizontalAlignment', 'left', 'LabelVerticalAlignment', 'bottom', 'FontSize', 8);
     xlabel('Hora de la semana'); ylabel('Tanque de alta (%)'); xlim([0 168]);
-    legend({'por debajo del nivel crítico', 'A', 'C'}, 'Location', 'best');
+    legend({'por debajo del nivel crítico', 'A', 'C'}, 'Orientation', 'horizontal', ...
+        'Location', 'northoutside', 'Box', 'off');
     % los integradores de los tanques no saturan a cero: el tramo negativo es
     % el hidrogeno servido sin inventario, que es lo que mide kg_H2_no_servido
     yl = ylim;
@@ -339,12 +341,13 @@ try
     ylabel('SOC batería (%)'); ylim([0 100]); grid on
 
     ax4 = subplot(4,1,4);
-    fill([0 tf tf 0], [0 0 72 72], [1 0.92 0.92], 'EdgeColor', 'none'); hold on
+    fill([0 tf tf 0], [0 0 72 72], [0.98 0.965 0.93], 'EdgeColor', 'none'); hold on
     plot(td, r.LOH_High, '-', 'Color', [0.10 0.45 0.70], 'LineWidth', 1.1);
     plot(td, r.LOH_Low,  '-', 'Color', [0.75 0.35 0.75], 'LineWidth', 0.9);
-    yline(72, 'r--', 'LineWidth', 0.8);
+    yline(72, '--', 'Color', [0.55 0.42 0.12], 'LineWidth', 0.8);
     ylabel('Tanques de H_2 (%)'); xlabel('Día de la simulación'); grid on
-    legend({'zona crítica', 'tanque de alta', 'tanque de baja'}, 'Location', 'best', 'Box', 'off');
+    legend({'por debajo del nivel crítico', 'tanque de alta', 'tanque de baja'}, ...
+        'Location', 'best', 'Box', 'off');
 
     linkaxes([ax1 ax2 ax3 ax4], 'x'); xlim([0 tf]);
     set([ax1 ax2 ax3 ax4], 'XTick', 0:1:ceil(tf));
