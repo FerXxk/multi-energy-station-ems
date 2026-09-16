@@ -2,11 +2,11 @@
 
 ## Diapositiva 1 · Estrategias de gestión energética para una estación de repostaje multi-energía
 
-Buenos días. Gracias, presidente.
+Buenos días.
 
-Soy Fernando Román Hidalgo y presento el Trabajo Fin de Grado «Estrategias de gestión energética para una estación de repostaje multi-energía», dirigido por el catedrático Miguel Ángel Ridao Carlini, del Departamento de Ingeniería de Sistemas y Automática.
+Soy Fernando Román Hidalgo y presento el Trabajo Fin de Grado «Estrategias de gestión energética para una estación de repostaje multi-energía».
 
-La charla tiene tres movimientos: el planteamiento y los datos, los dos modelos de predicción, y los tres gestores de energía que comparo.
+Dividire la charla en tres partes: el planteamiento y los datos, los dos modelos de predicción, y los tres algoritmos de gestión de energía que comparo.
 
 ---
 
@@ -14,21 +14,17 @@ La charla tiene tres movimientos: el planteamiento y los datos, los dos modelos 
 
 El transporte es una cuarta parte de las emisiones de la Unión, y casi tres cuartas partes de esa fracción son carretera. Es uno de los focos que el Pacto Verde Europeo tiene que cerrar.
 
-El marco ya pone fechas. La Hoja de Ruta del Hidrógeno fija entre cien y ciento cincuenta hidrogeneras públicas para dos mil treinta, y sitúa los corredores de repostaje verde como prioridad. El PNIEC fija cinco millones y medio de vehículos eléctricos en España para esa misma fecha. Y el reglamento europeo AFIR convierte el despliegue de recarga en objetivos vinculantes.
+El marco ya pone fechas estrictas para la descarbonización del transporte —con objetivos para vehículos eléctricos, hidrogeneras y corredores verdes—, pero hoy se contemplan y despliegan de forma totalmente separada, fragmentando las inversiones por cada vector energético. 
 
-El problema es esa fragmentación: cada vector arrastra hoy su propia infraestructura y su propia inversión.
-
-Y ya hay precedentes: Repsol inauguró en dos mil veinticinco la estación de Morro Jable, en Fuerteventura, que es casi la combinación de componentes de OASIS a menor escala y sin electrolizador propio.
-
-Con esa integración el reto deja de ser de dimensionamiento y pasa a ser de operación: decidir, en cada instante, de dónde sale cada kilovatio.
+Aunque ya existen precedentes reales de estaciones multi-energía combinadas (como la inaugurada por Repsol en Fuerteventura, Morro Jable,), la solución pasa por integrarlas conjuntamente en una microrred. Con esta integración, el reto de la infraestructura deja de ser un problema de dimensionamiento físico y se convierte en un desafío puro de operación: decidir en cada instante y de forma inteligente de dónde sale cada kilovatio
 
 ---
 
 ## Diapositiva 3 · La estación OASIS, modelada en Simulink
 
-Esta es la instalación: la microrred OASIS del departamento, modelada en Simulink sobre la librería Simugrid. Tienen en pantalla los seis componentes con sus tamaños; el orden de magnitud es medio megavatio de fotovoltaica, un megavatio-hora de batería y doscientos kilovatios de electrolizador.
+Esta es la instalación: una microrred modelada en Simulink sobre la librería Simugrid. Tienen en pantalla los seis componentes con sus tamaños; el orden de magnitud es medio megavatio de fotovoltaica, un megavatio-hora de batería y doscientos kilovatios de electrolizador.
 
-El modelo de Simulink viene del trabajo previo del grupo, y lo primero que hice fue ajustar su parametrización a la escala de una electrolinera, para que la estación no quedara sobredimensionada. Y hay dos tamaños que sí salen de la demanda medida: los cargadores, cincuenta kilovatios y dos unidades, y la pila de combustible, ciento treinta kilovatios, que es el pico de los dos cargadores más el compresor y un margen del diez por ciento. En dos diapositivas están los datos de demanda que lo sostienen.
+El modelo de Simulink viene del trabajo previo del grupo, y lo primero que hice fue ajustar su parametrización a la escala de una electrolinera para que la estación no quedara sobredimensionada. Todo se ha dimensionado a partir de la demanda media, destacando especialmente dos tamaños que salen directamente de los datos reales: la potencia de los cargadores (cincuenta kilovatios) y su número (dos unidades), como veremos mas adelante
 
 ---
 
@@ -37,8 +33,6 @@ El modelo de Simulink viene del trabajo previo del grupo, y lo primero que hice 
 El gestor de energía —el EMS, por sus siglas en inglés— es este único bloque de Simulink, y toma tres decisiones.
 
 Cuando sobra sol, cómo repartir el excedente entre cargar la batería y producir hidrógeno. Cuando falta, en qué orden cubrir el déficit: batería, pila, red. Y en todo momento, si conviene producir hidrógeno o reponerlo desde fuera, comparando el coste del kilogramo producido aquí con su precio de reposición.
-
-Todas las versiones que voy a comparar mantienen exactamente esta firma. Cambia el script del bloque de decisión y nada más: el mismo modelo físico, los mismos perfiles de entrada, la misma semilla de demanda.
 
 Y el objetivo del trabajo no es solo mejorar ese gestor, sino poder atribuir la mejora: cuánto viene de la predicción y cuánto de las reglas que la consumen.
 
