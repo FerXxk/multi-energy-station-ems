@@ -40,37 +40,37 @@ Y el objetivo del trabajo no es solo mejorar ese gestor, sino poder atribuir la 
 
 ## Diapositiva 5 · La demanda sale de sesiones reales de carga rápida, no de una hipótesis
 
-El primer bloque de datos sirve para dimensionar, y fija dos parámetros de la instalación.
+Este primer bloque sirve para dimensionar la instalación.
 
-La fuente es DESL-EPFL, casi mil novecientas sesiones reales de carga rápida con una energía media de treinta y dos kilovatios-hora, contrastadas con las de Caltech para comprobar que carga rápida y carga lenta son familias distintas.
+Parto de un dataset real de carga rápida —una electrolinera de acceso público, con casi dos mil sesiones registradas—, y lo contrasto con datos de carga lenta para confirmar que son dos familias de comportamiento distintas.
 
-De ahí salen las dos cifras del dimensionado. Cincuenta kilovatios cubren una sesión media en unos cuarenta minutos sin exigir transformador de media tensión. Y el número de cargadores sale de la cola en hora punta: con uno la espera media se va a media hora, con dos baja a dos minutos, y el tercero ya no compensa.
+De ahí salen los dos parámetros del dimensionado. Cincuenta kilovatios por cargador, porque cubre una sesión media sin obligar a meter un transformador de media tensión. Y dos cargadores, porque es donde la cola en hora punta deja de ser un problema: el tercero ya no compensa.
 
-Dimensiono sobre el panorama actual a propósito: es el escenario del que hay datos reales, y escalar hacia arriba es más fácil que hacia abajo, más con una arquitectura modular como esta.
+Dimensiono sobre el panorama actual a propósito: es el escenario del que hay datos reales, y con una arquitectura modular como esta escalar hacia arriba es fácil.
 
-Con esas distribuciones se genera el perfil de demanda de cada simulación. Es estocástico, y eso importará en la comparación.
+Con esas distribuciones genero el perfil de demanda de cada simulación. Es estocástico, y eso importará en la comparación.
 
 ---
 
 ## Diapositiva 6 · Y los datos de entrenamiento, de dos fuentes públicas alineadas hora a hora
 
-El segundo bloque es el de entrenamiento, y son dos fuentes públicas alineadas hora a hora.
+El segundo bloque es el de entrenamiento: dos fuentes públicas alineadas hora a hora.
 
-Para la irradiancia, NASA POWER, que es un reanálisis meteorológico: de ahí saco, para el punto de Sevilla, casi veinte años de registro horario y las variables que explican la nubosidad. Un detalle que merece la pena: la hora y el día no entran como un número, sino codificados en seno y coseno, para que el modelo sepa que las once de la noche y la medianoche —que en la escala numérica son el veintitrés y el cero— están pegadas, y no en los extremos opuestos.
+La irradiancia sale de NASA POWER, un reanálisis meteorológico, del que tomo cerca de veinte años de registro horario para el punto de Sevilla junto con las variables que explican la nubosidad. Un detalle: la hora y el día no entran como número, sino en seno y coseno, para que el modelo sepa que las once de la noche y la medianoche están pegadas y no en extremos opuestos de la escala.
 
-Para el precio, las casaciones del mercado diario español a través de ENTSO-E. Además del histórico, entra el contexto que explica su deriva: sobre todo la capacidad fotovoltaica instalada en España, que ha crecido lo suficiente como para cambiar la forma del precio a mediodía.
+El precio son las casaciones del mercado diario español, vía ENTSO-E. Y con el histórico entra el contexto que explica su deriva: sobre todo la fotovoltaica instalada en España, que ha crecido lo bastante como para cambiarle la forma al precio a mediodía.
 
-Y un detalle que importa: el reparto entre entrenamiento y prueba es temporal, nunca aleatorio. Mezclar horas le regalaría al modelo información del futuro.
+Y algo que importa: el reparto entre entrenamiento y prueba es temporal, nunca aleatorio. Mezclar horas le regalaría al modelo información del futuro.
 
 ---
 
 ## Diapositiva 7 · Dos redes con la misma arquitectura y parada temprana por validación
 
-Las dos redes comparten arquitectura: dos capas LSTM apiladas —redes recurrentes con memoria larga— y una salida de veinticuatro valores, que es el horizonte de un día. Se entrenan con Adam y paran por criterio de validación. En pantalla, la curva de RMSE: azul entrenamiento, negro validación. No se separan: no hay sobreajuste.
+Las dos redes comparten arquitectura: dos capas LSTM y una salida de veinticuatro valores, el horizonte de un día. En pantalla, la curva de error: entrenamiento y validación no se separan, así que no hay sobreajuste.
 
-Entreno con RMSE, el error cuadrático medio, porque al elevar al cuadrado penaliza mucho más un fallo grande que varios pequeños, y aquí lo que rompe una decisión es el fallo grande: no ver una punta de precio o una caída de sol. Para comparar modelos uso después el error absoluto medio, que está en las unidades de la variable y no lo dominan cuatro horas atípicas.
+Lo que sí merece explicación es por qué uso dos métricas distintas. Entreno con RMSE porque al elevar al cuadrado castiga mucho más un fallo grande que varios pequeños, y aquí lo que rompe una decisión es el fallo grande: no ver una punta de precio o una caída de sol. Pero comparo modelos con el error absoluto medio, que está en unidades de la variable y no lo dominan cuatro horas atípicas.
 
-Una diferencia que importa: el modelo solar puede imponer que la irradiancia predicha no sea negativa. El de precio no, porque el precio admite negativos.
+Y una asimetría entre los dos modelos: al solar puedo imponerle que la irradiancia predicha no sea negativa. Al de precio no, porque el precio sí admite negativos.
 
 ---
 
@@ -78,49 +78,51 @@ Una diferencia que importa: el modelo solar puede imponer que la irradiancia pre
 
 Y aquí está el problema, el resultado que reorientó este capítulo.
 
-Cada red se evalúa contra su línea base: la solar contra la persistencia de cielo claro, la de precio contra la de veinticuatro horas. Y no es una vara de medir cualquiera: en estas dos series el día de hoy se parece muchísimo al de ayer, así que «lo mismo que ayer» acierta la mayor parte del tiempo. Es una referencia dura.
+Cada red se evalúa contra su línea base: la solar contra la persistencia de cielo claro, la de precio contra la de veinticuatro horas. Y es una referencia dura: en estas dos series el día de hoy se parece muchísimo al de ayer, así que «lo mismo que ayer» acierta la mayor parte del tiempo. 
 
 Ninguna de las dos la bate: la solar queda un ocho coma ocho por ciento por detrás, la de precio un siete coma uno.
 
-Pero el motivo de esa derrota es lo que abre la solución. Una red recurrente está pensada para anticipar cambios, no para repetir lo de ayer. En las horas en que no pasa nada, que son la mayoría, la persistencia es imbatible; en las que sí pasa algo, que son las que deciden, aporta la red. Lo ven en el panel de abajo a la izquierda: el día nublado la red da cuatrocientos veinte y lo real fueron doscientos sesenta. Aciertan en sitios distintos, así que la salida no es elegir una, sino combinarlas.
+Pero pierden por una razón que vale la pena. Una red recurrente no está hecha para repetir lo de ayer, sino para anticipar cambios — y la mayoría de las horas no cambia nada.
+
+La persistencia gana casi siempre. La red gana cuando importa.
+
+No compiten: se complementan. Por eso la salida no es elegir una, sino combinarlas.
 
 ---
 
 ## Diapositiva 9 · La solución: proyección física y ponderación con el naive
 
-La solución tiene tres partes, y ninguna exige reentrenar.
+La solución tiene tres partes, todas de postprocesamiento.
 
-La primera es física: acotar la predicción a la envolvente de cielo claro, no dejar que la irradiancia prevista supere la de un día despejado. Con eso el error medio diurno baja de cincuenta y nueve a cincuenta y seis vatios-hora por metro cuadrado.
+La primera consiste en acotar la predicción a la envolvente de cielo claro, no dejar que la irradiancia prevista supere la de un día despejado.
 
-La segunda da nombre a la diapositiva: ponderar la red con su propia línea base, una combinación convexa con un peso distinto por cada hora del horizonte, ajustado en validación y nunca en test.
+La siguiente es la ponderación de la red con su propia línea base, una combinación convexa con un peso distinto por cada hora del horizonte.
 
 La tercera es la corrección del lazo cerrado, realimentando con el precio real de la hora ya transcurrida, que sigue siendo causal.
 
-Y el resultado es que la señal combinada sí bate a su línea base: un cinco coma ocho por ciento mejor en solar y un seis coma seis en precio. Conviene decir sobre qué se mide esa mejora: no sobre no predecir nada, sino sobre una referencia que ya acierta la mayor parte del tiempo.
+Y el resultado es que la señal combinada sí bate a su línea base. Y esa mejora se mide sobre una referencia que ya acierta la mayor parte del tiempo.
 
 ---
 
 ## Diapositiva 10 · Cuatro escenarios que cruzan recurso solar y régimen de precio
 
-Para comparar los gestores hacen falta escenarios, y no los elegí al azar: cruzan las dos variables que gobiernan la decisión del EMS, recurso solar y régimen de precio.
+Para comparar los gestores necesito escenarios, y no los elegí al azar: cruzan las dos variables que gobiernan la decisión del EMS, sol y precio. Con sol y nublado, con precio plano y con punta, laborable y fin de semana.
 
-Un laborable soleado con precio plano. Un laborable nublado, que es el caso sin excedente, con punta de precio por la tarde. Un fin de semana soleado, con precio casi nulo a mediodía. Y el de mayor diferencial de precio de todo dos mil veinticinco.
-
-Cada escenario no se simula como un día suelto, sino como la semana real de siete días que arranca en esa fecha, con su precio y su irradiancia de calendario. Y cada uno se repite con cinco semillas del generador de demanda.
+Y no se simula un día suelto: cada escenario es la semana real del dataset de 2025 que arranca en esa fecha, repetida con varias semillas de demanda.
 
 ---
 
 ## Diapositiva 11 · Cuatro piezas sostienen todas las cifras que vienen a continuación
 
-Antes de las cifras, las cuatro piezas que las sostienen.
+Antes de las cifras, cómo las mido. Cuatro decisiones.
 
-La primera es comparar en pareja, que es el esquema: la misma semilla genera el mismo perfil de demanda para todas las versiones, así que comparo dos versiones sobre la misma semana y no dos promedios. El azar de la demanda se va en la resta. Veinte pares: cuatro escenarios por cinco semillas.
+Comparo en pareja: la misma semilla da la misma demanda a todas las versiones, así que enfrento dos versiones sobre la misma semana. El azar se va en la resta.
 
-La segunda es el test de Wilcoxon: en vez de mirar si la media mejora, mira si las diferencias caen siempre del mismo lado. Lo elegí porque unas pocas semanas nubladas muy caras bastaban para arrastrar la media.
+Uso Wilcoxon en lugar de la media: lo que importa es que las diferencias caigan siempre del mismo lado, porque unas pocas semanas nubladas y caras arrastran cualquier promedio.
 
-La tercera es un umbral de relevancia, y es el que me pongo en contra: por debajo de nueve euros a la semana, que es lo que varía la propia referencia solo por cambiar de semillas, lo doy por empate. Fijado antes de simular.
+Un umbral de relevancia, fijado antes de simular y en mi contra: por debajo de nueve euros a la semana lo doy por empate.
 
-Y la cuarta es el oráculo: repetir la tanda con la previsión perfecta. Es un techo. Si con previsión perfecta una idea no gana, mejorar la predicción no la va a salvar.
+Y un oráculo, la misma tanda con previsión perfecta. Es un techo: si con previsión perfecta una idea no gana, mejorar la predicción no la va a salvar.
 
 ---
 
@@ -128,21 +130,21 @@ Y la cuarta es el oráculo: repetir la tanda con la previsión perfecta. Es un t
 
 El primer gestor, la Versión A, es la referencia: viene del TFM previo del grupo y lo he portado a esta arquitectura.
 
-Quiero insistir en lo que ya trae, porque condiciona cómo se lee todo lo demás. Tienen las cuatro en pantalla; me detengo en dos. El tiempo mínimo de funcionamiento de dos horas con histéresis, para que los equipos electroquímicos no conmuten cada pocos minutos. Y una decisión económica de producir, que compara el coste del kilogramo producido aquí con lo que costaría reponerlo fuera.
+Insisto en lo que ya trae, porque condiciona cómo se lee todo lo demás. Tienen las cuatro reglas en pantalla; me quedo con dos: un tiempo mínimo de funcionamiento con histéresis, para que los equipos electroquímicos no conmuten cada pocos minutos, y una decisión económica de producir, que compara lo que cuesta el kilogramo aquí con lo que costaría reponerlo fuera.
 
-Es decir, ya tiene los mecanismos que distinguen a un gestor de reglas maduro de un reparto por prioridades. Lo que no tiene es ninguna predicción.
+No es un reparto por prioridades: es un gestor de reglas maduro. Lo único que no tiene es predicción.
 
 ---
 
 ## Diapositiva 13 · Versión B: la previsión mejora sistemáticamente el servicio de hidrógeno
 
-La Versión B es la misma heurística con las dos previsiones metidas dentro. No cambia la arquitectura: cambia lo que mira la regla en el momento de decidir.
+La Versión B es la misma heurística con las dos previsiones metidas dentro. La arquitectura no cambia: cambia lo que mira la regla al decidir. La previsión solar entra en el reparto del excedente — si se anticipa que el excedente va a caer, el reparto se desplaza hacia la batería antes de que caiga. Y la de precio gobierna un arbitraje de batería.
 
-La previsión solar entra en el reparto del excedente: antes dependía solo del estado de carga del instante; ahora, si se anticipa que el excedente va a caer, el reparto se desplaza hacia la batería antes de que caiga. Y la de precio gobierna un arbitraje de batería.
+Sale una victoria y un empate.
 
-B se comparó sobre veinticuatro horas con diez semillas, cuarenta pares, porque ahí lo que importa es la dinámica eléctrica. Y tiene una victoria y un empate. La victoria es el servicio de hidrógeno —el nivel medio del tanque de alta y el tiempo que pasa por debajo del nivel crítico—: mejora en treinta y nueve de los cuarenta pares. La mejora es pequeña, pero escala con la calidad de la previsión: con el oráculo se multiplica por diez. Lo que limita es la predicción, no el diseño.
+La victoria es el servicio de hidrógeno: mejora en treinta y nueve de los cuarenta pares. Esta mejora además escala con la calidad de la previsión: con el oráculo se multiplica por diez. Lo que limita es la predicción, no el diseño.
 
-El empate es el coste, y de ahí sale la regla de diseño que aplico después: la primera versión del arbitraje traducía «el precio va a subir» en una acción de tamaño fijo, y empeoraba el coste, más cuanto mejor era la previsión. Una acción disparada por una previsión tiene que salir del margen económico disponible, no de una constante.
+El empate es el coste, y de ahí sale la regla de diseño que aplico después. La primera versión del arbitraje traducía «el precio va a subir» en una acción de tamaño fijo — y empeoraba el coste, más cuanto mejor era la previsión. Una acción disparada por una previsión tiene que salir del margen económico disponible, no de una constante.
 
 ---
 
@@ -150,9 +152,9 @@ El empate es el coste, y de ahí sale la regla de diseño que aplico después: l
 
 B no movió el coste, así que la pregunta pasó a ser dónde se va ese dinero. Volví a la Versión A y descompuse su importación de red por destinos, y apareció esto.
 
-De los mil trescientos veintiún kilovatios-hora que compra a la red en una semana, el setenta y seis por ciento van al electrolizador, a ciento veintiuno con cinco euros el megavatio-hora. Y en los instantes exactos en que los compra, la batería está al ochenta y cinco por ciento de media.
+De los kilovatios-hora que compra a la red en una semana, el setenta y seis por ciento van al electrolizador. Y en los instantes exactos en que los compra, la batería está al ochenta y cinco por ciento de media.
 
-Pongan eso junto al otro lado del balance: en esa misma semana la estación exporta catorce mil kilovatios-hora a treinta y nueve euros. Vende diez veces más energía de la que compra, y la compra tres veces más cara de lo que la vende. Está pasando la misma energía dos veces por el contador, y perdiendo en los dos sentidos.
+Pongan eso junto al otro lado del balance: en esa misma semana la estación vende diez veces más energía de la que compra, y la compra tres veces más cara de lo que la vende. Está pasando la misma energía dos veces por el contador, y perdiendo en los dos sentidos.
 
 El motivo está en el orden del código: la batería cubre primero los vehículos y, en un paso posterior, la decisión económica enciende el electrolizador; esa carga nueva no se le vuelve a ofrecer, así que la absorbe la red.
 
