@@ -465,10 +465,15 @@
   set text(lang: "es")
   set par(justify: true)
   // Las cabeceras de página llaman "Capítulo N" a los encabezados de
-  // nivel 1 (ver main_heading más abajo); se fija aquí el mismo supplement
-  // para que las referencias cruzadas (@cap-...) usen la misma palabra en
-  // vez del valor por defecto de Typst ("Sección").
+  // nivel 1 (ver page-header más abajo); se fija aquí el mismo supplement
+  // para que las referencias cruzadas (@cap-...) usen la misma palabra.
+  // Los encabezados de nivel inferior sí son secciones, y sus referencias
+  // (@sec-...) las nombran como tales: así "la @sec-defectos" se imprime
+  // "la Sección 6.4" y no "la Capítulo 6.4", que no concuerda en género.
   set heading(supplement: [Capítulo])
+  show heading.where(level: 2): set heading(supplement: [Sección])
+  show heading.where(level: 3): set heading(supplement: [Sección])
+  show heading.where(level: 4): set heading(supplement: [Sección])
 
   set page(
     margin: (

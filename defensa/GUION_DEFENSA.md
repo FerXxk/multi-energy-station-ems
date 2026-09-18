@@ -6,7 +6,7 @@ Buenos días.
 
 Soy Fernando Román Hidalgo y presento el Trabajo Fin de Grado «Estrategias de gestión energética para una estación de repostaje multi-energía».
 
-Dividire la charla en tres partes: el planteamiento y los datos, los dos modelos de predicción, y los tres algoritmos de gestión de energía que comparo.
+Dividiré la charla en tres partes: el planteamiento y los datos, los dos modelos de predicción, y los tres algoritmos de gestión de energía que comparo.
 
 ---
 
@@ -24,7 +24,7 @@ Aunque ya existen precedentes reales de estaciones multi-energía combinadas (co
 
 Esta es la instalación: una microrred modelada en Simulink sobre la librería Simugrid. Tienen en pantalla los seis componentes con sus tamaños; la fotovoltaica instalada en la marquesina, la batería, el electrolizador, los tanques de alta y baja presión, la pila de combustible y los cargadores de vehículo eléctrico.
 
-El modelo de Simulink viene del trabajo previo del grupo, y lo primero que hice fue ajustar su parametrización a la escala de una electrolinera para que la estación no quedara sobredimensionada. Todo se ha dimensionado a partir de la demanda media, destacando especialmente dos tamaños que salen directamente de los datos reales: la potencia de los cargadores (cincuenta kilovatios) y su número (dos unidades), como veremos mas adelante
+El modelo de Simulink viene del trabajo previo del grupo, y lo primero que hice fue ajustar su parametrización a la escala de una electrolinera para que la estación no quedara sobredimensionada. Todo se ha dimensionado a partir de la demanda media, destacando especialmente dos tamaños que salen directamente de los datos reales: la potencia de los cargadores (cincuenta kilovatios) y su número (dos unidades), como veremos más adelante.
 
 ---
 
@@ -116,7 +116,7 @@ Antes de las cifras, cómo las mido. Cuatro decisiones.
 
 Comparo en pareja: la misma semilla da la misma demanda a todas las versiones, así que enfrento dos versiones sobre la misma semana. El azar se va en la resta.
 
-Uso Wilcoxon en lugar de la media para que el promedio no se pervierta por un mal dia.
+Uso Wilcoxon en lugar de la media para que el promedio no se pervierta por un mal día.
 
 Un umbral de relevancia, fijado antes de simular y en mi contra: por debajo de nueve euros a la semana lo doy por empate.
 
@@ -214,9 +214,9 @@ Repasando lo que se ha logrado en el trabajo, tenemos:
 
 Dos modelos entrenados, validados y corregidos, cuya señal combinada supera a la línea base en solar y en precio, y es la que consume el simulador.
 
-Tres gestores sobre la misma instalación: uno que mejora la gestión de hidrógeno, y otra que reduce el coste semanal casi un catorce por ciento en los veinte casos.
+Tres gestores sobre la misma instalación: uno que mejora la gestión de hidrógeno, y otro que reduce el coste semanal casi un catorce por ciento en los veinte casos.
 
-Y la tercera, poder atribuir la mejora pieza a pieza. Gracias a esto podemos saber que aporta cada red LSTM a la decisión final.
+Y la tercera, poder atribuir la mejora pieza a pieza. Gracias a esto podemos saber qué aporta cada red LSTM a la decisión final.
 
 Cuatro líneas futuras. Aislar la previsión solar, para medir por separado lo que hoy va sumado dentro de la programación. Dar al tanque un nivel objetivo antes de un día nublado previsto. Modelar la degradación de la batería. Y ampliar el horizonte a cuarenta y ocho horas con control predictivo (mpc).
 
