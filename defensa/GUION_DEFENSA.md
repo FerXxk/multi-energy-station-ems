@@ -12,17 +12,17 @@ Dividire la charla en tres partes: el planteamiento y los datos, los dos modelos
 
 ## Diapositiva 2 · El marco ya pone fechas; la infraestructura sigue separada por vector
 
-El transporte es una cuarta parte de las emisiones de la Unión, y casi tres cuartas partes de esa fracción son carretera. Es uno de los focos que el Pacto Verde Europeo tiene que cerrar.
+El transporte es una cuarta parte de las emisiones de la Unión, y casi tres cuartas partes de esa fracción son carretera.
 
-El marco ya pone fechas estrictas para la descarbonización del transporte —con objetivos para vehículos eléctricos, hidrogeneras y corredores verdes—, pero hoy se contemplan y despliegan de forma totalmente separada, fragmentando las inversiones por cada vector energético. 
+El marco ya pone fechas estrictas para la descarbonización del transporte (2030 datos), pero hoy se contemplan y despliegan de forma totalmente separada, fragmentando las inversiones por cada vector energético. 
 
-Aunque ya existen precedentes reales de estaciones multi-energía combinadas (como la inaugurada por Repsol en Fuerteventura, Morro Jable,), la solución pasa por integrarlas conjuntamente en una microrred. Con esta integración, el reto de la infraestructura deja de ser un problema de dimensionamiento físico y se convierte en un desafío puro de operación: decidir en cada instante y de forma inteligente de dónde sale cada kilovatio
+Aunque ya existen precedentes reales de estaciones multi-energía combinadas (como la inaugurada por Repsol en Fuerteventura, Morro Jable), la solución pasa por integrarlas conjuntamente en una microrred. Con esta integración surge un desafío de operación: decidir en cada instante y de forma inteligente de dónde sale cada kilovatio
 
 ---
 
 ## Diapositiva 3 · La estación OASIS, modelada en Simulink
 
-Esta es la instalación: una microrred modelada en Simulink sobre la librería Simugrid. Tienen en pantalla los seis componentes con sus tamaños; el orden de magnitud es medio megavatio de fotovoltaica, un megavatio-hora de batería y doscientos kilovatios de electrolizador.
+Esta es la instalación: una microrred modelada en Simulink sobre la librería Simugrid. Tienen en pantalla los seis componentes con sus tamaños; la fotovoltaica instalada en la marquesina, la batería, el electrolizador, los tanques de alta y baja presión, la pila de combustible y los cargadores de vehículo eléctrico.
 
 El modelo de Simulink viene del trabajo previo del grupo, y lo primero que hice fue ajustar su parametrización a la escala de una electrolinera para que la estación no quedara sobredimensionada. Todo se ha dimensionado a partir de la demanda media, destacando especialmente dos tamaños que salen directamente de los datos reales: la potencia de los cargadores (cincuenta kilovatios) y su número (dos unidades), como veremos mas adelante
 
@@ -42,11 +42,9 @@ Y el objetivo del trabajo no es solo mejorar ese gestor, sino poder atribuir la 
 
 Este primer bloque sirve para dimensionar la instalación.
 
-Parto de un dataset real de carga rápida —una electrolinera de acceso público, con casi dos mil sesiones registradas—, y lo contrasto con datos de carga lenta para confirmar que son dos familias de comportamiento distintas.
+Parto de un dataset real de carga rápida —una electrolinera suiza de acceso público.
 
-De ahí salen los dos parámetros del dimensionado. Cincuenta kilovatios por cargador, porque cubre una sesión media sin obligar a meter un transformador de media tensión. Y dos cargadores, porque es donde la cola en hora punta deja de ser un problema: el tercero ya no compensa.
-
-Dimensiono sobre el panorama actual a propósito: es el escenario del que hay datos reales, y con una arquitectura modular como esta escalar hacia arriba es fácil.
+De ahí salen los parámetros del dimensionado. Cincuenta kilovatios por cargador, porque cubre una sesión media sin obligar a meter un transformador de media tensión. Y dos cargadores, porque es donde la cola en hora punta deja de ser un problema.
 
 Con esas distribuciones genero el perfil de demanda de cada simulación. Es estocástico, y eso importará en la comparación.
 
@@ -68,9 +66,9 @@ Y algo que importa: el reparto entre entrenamiento y prueba es temporal, nunca a
 
 Las dos redes comparten arquitectura: dos capas LSTM y una salida de veinticuatro valores, el horizonte de un día. En pantalla, la curva de error: entrenamiento y validación no se separan, así que no hay sobreajuste.
 
-Lo que sí merece explicación es por qué uso dos métricas distintas. Entreno con RMSE porque al elevar al cuadrado castiga mucho más un fallo grande que varios pequeños, y aquí lo que rompe una decisión es el fallo grande: no ver una punta de precio o una caída de sol. Pero comparo modelos con el error absoluto medio, que está en unidades de la variable y no lo dominan cuatro horas atípicas.
+Lo que sí merece explicación es por qué uso dos métricas distintas. Entreno con RMSE porque al elevar al cuadrado castiga mucho más un fallo grande que varios pequeños, y aquí lo que rompe una decisión es el fallo grande: no ver una punta de precio o una caída de sol.
 
-Y una asimetría entre los dos modelos: al solar puedo imponerle que la irradiancia predicha no sea negativa. Al de precio no, porque el precio sí admite negativos.
+Al solar puedo imponerle que la irradiancia predicha no sea negativa. Al de precio no, porque el precio sí admite negativos.
 
 ---
 
@@ -118,7 +116,7 @@ Antes de las cifras, cómo las mido. Cuatro decisiones.
 
 Comparo en pareja: la misma semilla da la misma demanda a todas las versiones, así que enfrento dos versiones sobre la misma semana. El azar se va en la resta.
 
-Uso Wilcoxon en lugar de la media: lo que importa es que las diferencias caigan siempre del mismo lado, porque unas pocas semanas nubladas y caras arrastran cualquier promedio.
+Uso Wilcoxon en lugar de la media para que el promedio no se pervierta por un mal dia.
 
 Un umbral de relevancia, fijado antes de simular y en mi contra: por debajo de nueve euros a la semana lo doy por empate.
 
@@ -164,11 +162,9 @@ El motivo está en el orden del código: la batería cubre primero los vehículo
 
 La Versión C separa dos decisiones que la heurística tomaba juntas: de dónde sale la energía del electrolizador y cuándo conviene producir. En pantalla, los cuatro pasos de la lógica común, con los dos que sustituyo en ámbar.
 
-El primero son diez líneas: la carga que crea la decisión de producir hidrógeno se le ofrece a la batería antes que a la red, mientras el estado de carga esté por encima del sesenta por ciento, que sale del contrafactual del diagnóstico anterior.
+La carga que crea la decisión de producir hidrógeno se le ofrece a la batería antes que a la red, mientras el estado de carga esté por encima del sesenta por ciento, que sale del contrafactual del diagnóstico anterior.
 
-El segundo es un planificador: estima cuánto hidrógeno falta y cuánto excedente gratis viene, y de ahí salen las horas de electrolizador que hay que comprar a la red, que se colocan en las más baratas del horizonte.
-
-Y conviene precisar de dónde sale ese precio: el mercado diario publica sobre la una de la tarde las veinticuatro horas del día siguiente, así que la parte ya publicada se usa tal cual y solo se predice el tramo que falta.
+El segundo es un planificador: estima cuánto hidrógeno falta y cuánto excedente gratis viene, y de ahí salen las horas de electrolizador que hay que comprar a la red, que se colocan en las más baratas del horizonte que se predice (mercado +24h)
 
 Y lo que hace defendible la regla es que solo usa el orden: la decisión es «estoy entre las ene más baratas, sí o no», y eso no cambia si la previsión falla en el nivel mientras acierte en el orden.
 
@@ -176,27 +172,27 @@ Y lo que hace defendible la regla es que solo usa el orden: la decisión es «es
 
 ## Diapositiva 16 · Versión C: −13,9 % de coste semanal, en los veinte pares evaluados
 
-Los resultados de la Versión C, sobre siete días y veinte pares escenario-semilla.
+Los resultados de la Versión C, en veinte pares escenario-semilla.
 
-La figura es la diferencia de coste frente a la A, escenario por escenario; la banda gris es el umbral de relevancia. B cae dentro de la banda en los cuatro: en coste empata. C se sale por la izquierda en los cuatro, y por bastante.
+La figura es la diferencia de coste frente a la A, escenario por escenario. B cae dentro del umbral de relevancia: en coste empata. C se sale por la izquierda en los cuatro, y por bastante.
 
 En la tabla, tres métricas. El coste baja unos cincuenta y dos euros por semana: casi un catorce por ciento, y gana en los veinte pares. La importación de red cae a la mitad, un cincuenta y cuatro por ciento. Y la autosuficiencia sube del ochenta y ocho al noventa y cuatro por ciento.
 
-El orden entre escenarios no lo fija el excedente, sino el precio al que compraba el electrolizador: se ahorra más donde más caro compraba.
+Comparando los escenarios se puede observar que se ahorra más donde más caro compraba.
 
-Y la mejora tiene un precio, que declaro yo. Los tres kilos de hidrógeno que hay que reponer desde fuera en el nublado sí están valorados dentro de esos cincuenta y dos euros. El ciclado no: la batería mueve dos coma dos veces más energía y la degradación no está modelada. Es la principal reserva que le pongo yo mismo al resultado.
+Pero la mejora tiene un coste: Los tres kilos de hidrógeno que hay que reponer de forma externa en el escenario nublado y el ciclado de la batería que a la larga provocaría un desgaste en la infraestructura.
 
 ---
 
 ## Diapositiva 17 · Y la mejora se puede atribuir pieza a pieza
 
-Como cada mecanismo tiene su interruptor, la mejora se atribuye pieza a pieza. Tres tandas, el mismo fichero, los mismos veinte pares: la versión con solo el primer cambio, la que le añade el planificador con el precio ya publicado, y la completa.
+La mejora se atribuye pieza a pieza aislando cada parte de la mejora. 
 
 Alimentar el electrolizador desde la batería, solo eso: menos cuarenta y siete euros con uno. El noventa por ciento del ahorro, en veinte de veinte pares.
 
-Añadir el planificador: cinco euros más. Y es aquí donde entra la previsión solar, porque el planificador la usa para estimar cuánto excedente gratis viene: su aportación está dentro de esta cifra y no se puede aislar de ella. Wilcoxon la da por significativa, pero cae por debajo de mi umbral de nueve, así que la declaro empate. El mecanismo no es comprar más barato, sino comprar menos.
+Añadir el planificador: cinco euros más. Y es aquí donde entra la previsión solar, porque el planificador la usa para estimar cuánto excedente gratis viene. La solución no es solo comprar más barato, sino comprar menos.
 
-Y añadir la red neuronal de precio: cero. Las dos tandas salen idénticas a precisión de máquina en los cuarenta indicadores. La razón es de disponibilidad de información: el mercado publica a las trece horas el día siguiente, así que el planificador ve entre once y treinta y cinco horas ya publicadas. Solo hay que predecir lo que quede del horizonte, y en la campaña ese tramo no cambió ni una de las decisiones.
+Y añadir la red neuronal de precio: cero. La razón es de disponibilidad de información: el mercado publica hasta las 12 h del día siguiente, predecir más allá de las 24h no aporta ya que el algoritmo sigue viendo los mismos tramos de precio.
 
 ---
 
@@ -204,25 +200,25 @@ Y añadir la red neuronal de precio: cero. Las dos tandas salen idénticas a pre
 
 Las limitaciones, agrupadas según a qué afectan.
 
-Del modelo físico: algunos bloques asumen simplificaciones, la más relevante la ecuación de gas ideal en los tanques, que hace caber más hidrógeno del que cabría de verdad. Y la pila no llega a arrancar, que no es un fallo del gestor sino la decisión correcta: recuperar electricidad del hidrógeno es el camino más caro y con más pérdidas de la estación. Tiene sentido en modo isla, y ese modo no lo ejercito.
+El modelo físico presenta algunas simplificaciones, como el gas ideal en los tanques, que hace caber más hidrógeno del que cabría de verdad. No se llega a usar la pila ya que el algoritmo decide que es el método más caro de cubrir la demanda. No se ejercita el modo isla.
 
-De los datos: la irradiancia sale de un reanálisis, que es lo que hace falta para entrenar pero no es la señal que tendría la estación en tiempo real; cambiarla por una previsión operativa no toca el modelo, solo la entrada. Y la demanda de hidrógeno se construye por analogía con la eléctrica porque aún no hay flota de la que medirla; es la misma para las tres versiones, así que no favorece a ninguna.
+En cuanto a los datos, la irradiancia sale de un reanálisis, para entrenar basta pero para operar habría que obtenerla de una predicción. Y la demanda de hidrógeno se construye por analogía con la eléctrica porque aún no hay datasets públicos de flotas.
 
-Y de alcance: el coste no incluye peajes ni cargos, así que las cifras son comparativas. Y los umbrales están ajustados a esta instalación: llevar el algoritmo a otra exige recalibrarlos, no solo copiarlo.
+Además se han obviado peajes y cargos, así que las cifras de coste son comparativas entre sistemas. Y por último las constantes usadas en los EMS están adaptadas a esta microrred, por lo que para otra instalación habría que reajustarlas.
 
 ---
 
 ## Diapositiva 19 · Conclusiones
 
-La pregunta del trabajo era si una previsión con redes LSTM mejora a un EMS heurístico ya maduro. La respuesta, medida, son estas tres conclusiones.
+Repasando lo que se ha logrado en el trabajo, tenemos:
 
 Dos modelos entrenados, validados y corregidos, cuya señal combinada supera a la línea base en solar y en precio, y es la que consume el simulador.
 
-Tres gestores sobre la misma instalación: la predictiva mejora el servicio de hidrógeno, y la final reduce el coste semanal casi un catorce por ciento en los veinte casos.
+Tres gestores sobre la misma instalación: uno que mejora la gestión de hidrógeno, y otra que reduce el coste semanal casi un catorce por ciento en los veinte casos.
 
-Y la tercera, que da sentido a las otras dos: la cadena de medida permite atribuir la mejora pieza a pieza. El valor de una previsión depende de en qué decisión se inserte y de qué información no esté ya disponible.
+Y la tercera, poder atribuir la mejora pieza a pieza. Gracias a esto podemos saber que aporta cada red LSTM a la decisión final.
 
-Cuatro líneas futuras. Aislar la previsión solar, para medir por separado lo que hoy va sumado dentro de la programación. Dar al tanque un nivel objetivo antes de un día nublado previsto, que corregiría el único indicador que C empeora. Modelar la degradación de la batería. Y ampliar el horizonte a cuarenta y ocho horas con control predictivo: es el único tramo donde el mercado ya no está publicado.
+Cuatro líneas futuras. Aislar la previsión solar, para medir por separado lo que hoy va sumado dentro de la programación. Dar al tanque un nivel objetivo antes de un día nublado previsto. Modelar la degradación de la batería. Y ampliar el horizonte a cuarenta y ocho horas con control predictivo (mpc).
 
 Muchas gracias por su atención.
 
